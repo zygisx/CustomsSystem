@@ -13,18 +13,19 @@ public class Inspection {
 	 * in forward task I'll change it to list of officers  */
 	private CustomsOfficer officer = null;	 /* the inspector */
 	private Vehicle vehicle	= null;			/* vehicle */
-	private String description = null;
+	private String extraDescription = null; /* Only if needed to mention something */
 	private boolean isSuccessful;		/* Is inspection successful. False if Vehicle failed to pass border. */
 	
 	private Calendar date = null;
-	private SimpleDateFormat dateFormat;
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	
 	
 	
 	public Inspection (CustomsOfficer officer, Vehicle vehicle) {
-		this.officer = officer;
-		this.vehicle = vehicle;
-		dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		if (officer != null)
+			this.officer = officer;
+		if (vehicle != null)
+			this.vehicle = vehicle;
 	}
 
 
@@ -32,21 +33,9 @@ public class Inspection {
 		return officer;
 	}
 
-
-	public void setOfficer(CustomsOfficer officer) {
-		this.officer = officer;
-	}
-
-
 	public Vehicle getVehicle() {
 		return vehicle;
 	}
-
-
-	public void setVehicle(Vehicle vehicle) {
-		this.vehicle = vehicle;
-	}
-
 
 	public void setSuccessful(boolean isSuccessful) {
 		this.isSuccessful = isSuccessful;
@@ -82,24 +71,22 @@ public class Inspection {
 		return dateFormat.format(date.getTime());
 	}
 	
-	private void makeDescription () {
-		description = null;
-		description = "Inspector:\n"
-			+ officer
-			+ "Vehicle:\n" 
-			+ vehicle
-			+ "Vehicle succesfuly pass border: "  + ( (isSuccessful) ? "YES\n" : "NO\n")
-			+ ( (date != null) ? "Inspection date: " + dateFormat.format(date.getTime()) + "\n" : "\n" );
-	}
+	public void setDescription(String description) {
+		if (description != null)
+			this.extraDescription = description;
+	}	
 	
 	public String getDescription() {
-		makeDescription();
-		return description;
+		return extraDescription;
 	}
-
+	
 	@Override
 	public String toString() {
-		return getDescription();
-	}	
+		return "Inspector: " + officer.getName() + " " + officer.getSurname() 
+			+ "\nVehicle: " + vehicle.getVehicleNumber()
+			+ "\nVehicle succesfuly pass border: "  + ( (isSuccessful) ? "YES\n" : "NO\n")
+			+ ( (extraDescription != null) ? "Description: " + getDescription() + "\n" : "" )
+			+ ( (date != null) ? "Inspection date: " + dateFormat.format(date.getTime()) + "\n" : "\n" );
+	}
 	
 }

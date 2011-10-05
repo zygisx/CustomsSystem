@@ -1,5 +1,7 @@
 package customsSystem;
 
+import java.util.ArrayList;
+
 public class Vehicle {
 	
 	/* types of vehicle */
@@ -13,16 +15,9 @@ public class Vehicle {
 		OTHER
 	}
 	
-	/* 
-	 * Kol kas neįdėta vairuotojo ir keleivių informacija. Kitoje užduotyje planuoju sukurti klasę Person
-	 * kurioje būtų visa reikalinga informacija. Kadangi ši užduotis reikalauja tik 4 pagrindinių klasių
-	 * todėl ir nėra informacijos apie transporto priemonėje esančius žmones, bei jos vairuotoją.
-	 */
-	
-	/* ---Not yet implemented ----
 	private Person driver;
-	private ArrayList<Person> passengers;
-	*/
+	private ArrayList<Person> passengers = new ArrayList<Person>();;
+	
 	
 	private int weight = 0;	 		/* Weight in kilos. By default weight is 0 kg */  
 	private int numOfPassengers = 0;
@@ -31,24 +26,29 @@ public class Vehicle {
 	private VehicleType type;		/* car type moto, car, truck, etc. */
 	
 	
-	public Vehicle(String vehicleNumber) {
-		this(VehicleType.OTHER, 0, vehicleNumber);
+	public Vehicle(String vehicleNumber, Person driver) {
+		this(vehicleNumber, driver, VehicleType.OTHER, 0);
 	}
 	
-	public Vehicle(VehicleType type, int weight, String vehicleNumber) {
-		this.type = type;
-		if (weight > 0) 
-			this.weight = weight;
+	public Vehicle(String vehicleNumber, Person driver, VehicleType type, int weight) {
 		if (vehicleNumber != null)
-			this.vehicleNumber = vehicleNumber;
+			this.vehicleNumber = vehicleNumber;  /* in future exception will be thrown */
+		if (driver != null)
+			this.driver = driver;
+		setType(type);
+		setWeight(weight);
 	}
 
 	public VehicleType getType() {
 		return type;
 	}
-
+	
+	// ToDo exception
 	public void setType(VehicleType type) {
-		this.type = type;
+		if (type != null)
+			this.type = type;
+		else
+			this.type = VehicleType.OTHER;
 	}
 
 	public int getWeight() {
@@ -60,12 +60,12 @@ public class Vehicle {
 			this.weight = weight;
 	}
 
+	public Person getDriver() {
+		return driver;
+	}
+	
 	public String getVehicleNumber() {
 		return vehicleNumber;
-	}
-
-	public void setVehicleNumber(String vehicleNumber) {
-		this.vehicleNumber = vehicleNumber;
 	}
 
 	public String getCargoDescription() {
@@ -76,24 +76,47 @@ public class Vehicle {
 		this.cargoDescription = cargoDescription;
 	}
 
-	public void setNumOfPassengers(int num) {
-		if ( num > 0)
-			numOfPassengers = num;
-	}
-
 	public int getNumOfPassengers() {
 		return numOfPassengers;
 	}
-
+	
+	/*
+	 * Methods to work with ArrayList
+	 * 
+	 */
+	public void addPassenger(Person passenger) {
+		numOfPassengers++;
+		if (passenger != null)			// ToDo exception
+			passengers.add(passenger);
+	}
+	
+	public Person getPassenger(int index) {
+		if ( index > 0 && index < passengers.size() )
+			return passengers.get(index);
+		return null;
+	}
+	
+	public Person getPassenger() {
+		if (! passengers.isEmpty() )
+			return passengers.get(0);
+		return null;
+	}
+	
+	public void removeOfficer (Person passenger) {
+		numOfPassengers--;
+		passengers.remove(passenger);
+	}
+	
 	@Override
 	public String toString() {
 		return "Vehicle type: " + type + "\n"
 			+ "Vehicle No.: " + vehicleNumber + "\n"
+			+ "Driver:\n " + driver.getName() + " " + driver.getSurname()
 			+ "Weight: " + weight + " kg\n"
 			+ "Number of passengers: " + numOfPassengers + "\n"
 			/* only if cargo description is not empty i print it */
 			+ ( (cargoDescription != null) ? "Cargo description: " + cargoDescription + "\n" : "" ); 
 	}
-	
+
 
 }

@@ -1,5 +1,7 @@
 package customsSystem;
 
+
+
 public class CustomsOfficer {
 	
 	public enum  Experience {
@@ -8,17 +10,22 @@ public class CustomsOfficer {
 		HEAD,
 		TRAINEE
 	}
+	/*
+	 *  in 3rd task this class will extend Person class;
+	 */
 	
 	private String name;
 	private String surname;
 	private String employeeNumber; /* valid employee number consist only from numbers */
 	private Experience experience;		
 	
-	
+	// ToDo throw exception
 	public CustomsOfficer(String name, String surname, String employeeNumber, Experience experience) {
-		this.name = name;
-		this.surname = surname;
-		if ( isWordFromDigits(employeeNumber) )		/* set employee number only if it consist from numbers */
+		if (name != null && Utilities.isWordFromLetters(name)) 
+			this.name = name;
+		if (surname != null && Utilities.isWordFromLetters(surname)) 
+			this.surname = surname;
+		if (employeeNumber != null && Utilities.isWordFromDigits(employeeNumber))
 			this.employeeNumber = employeeNumber;
 		this.experience = experience;
 		
@@ -61,12 +68,4 @@ public class CustomsOfficer {
 			+ "Employee no.:" + employeeNumber + "\n"
 			+ "Experience: " + experience + "\n";
 	}
-	
-	private boolean isWordFromDigits (String word) {
-		for ( char c : word.toCharArray() ) {
-	        if (!Character.isDigit(c)) return false;
-	    }
-	    return true;
-	}
-
 }

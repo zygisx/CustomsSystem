@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.text.SimpleDateFormat;
 
+import customsSystem.persons.CustomsOfficer;
+
 public class Inspection {
 	
 	
@@ -18,8 +20,6 @@ public class Inspection {
 	
 	private Calendar date = null;
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	
-	
 	
 	public Inspection (CustomsOfficer officer, Vehicle vehicle) {
 		if (officer != null)

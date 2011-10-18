@@ -2,6 +2,8 @@ package customsSystem;
 
 import java.util.ArrayList;
 
+import customsSystem.persons.CustomsOfficer;
+
 public class Customs {
 	
 	private ArrayList<CustomsOfficer> officers = new ArrayList<CustomsOfficer>();  /* All officers in customs */
@@ -40,13 +42,13 @@ public class Customs {
 	
 	public boolean removeOfficer (CustomsOfficer officer) {
 		if (officer != null)
-			return officers.remove(officer);		/* nors pats remove apdoroja null check */
+			return officers.remove(officer);		
 		return false;
 	}
 	
 	public void removeOfficer (int index) {
 		if (index >=0 && index < getOfficersNum())
-			officers.remove(index);		/* nors pats remove apdoroja klaidas*/
+			officers.remove(index);		
 	}
 	
 	public boolean isAvailableOfficers () {

@@ -2,6 +2,9 @@ package customsSystem;
 
 import java.util.ArrayList;
 
+import customsSystem.persons.Person;
+
+
 public class Vehicle {
 	
 	/* types of vehicle */
@@ -16,7 +19,7 @@ public class Vehicle {
 	}
 	
 	private Person driver;
-	private ArrayList<Person> passengers = new ArrayList<Person>();;
+	private ArrayList<Person> passengers = new ArrayList<Person>();
 	
 	
 	private int weight = 0;	 		/* Weight in kilos. By default weight is 0 kg */  

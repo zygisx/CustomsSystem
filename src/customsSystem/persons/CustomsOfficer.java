@@ -19,33 +19,42 @@ public class CustomsOfficer extends Person implements Validable{
 	// ToDo throw exception
 	public CustomsOfficer(String name, String surname, String personalID,  String employeeNumber, Experience experience) {
 		super(name, surname, personalID);
-		if (employeeNumber != null && Utilities.isWordFromDigits(employeeNumber))
-			this.employeeNumber = employeeNumber;
+		this.setEmployeeNumber(employeeNumber);
 		this.experience = experience;
 		
 	}
 
 	public CustomsOfficer(String name, String surname, String personalID,  String employeeNumber) {
-		this(name, surname, employeeNumber, personalID, Experience.UNKNOWN);
+		this(name, surname, personalID, employeeNumber, Experience.UNKNOWN);
 	}
 	
+	public CustomsOfficer(String name, String surname, String personalID) {
+		this(name, surname, personalID, "");
+	}
+	
+	public void setEmployeeNumber(String employeeNumber) {
+		if (employeeNumber != null && Utilities.isWordFromDigits(employeeNumber))
+			this.employeeNumber = employeeNumber;
+	}
 	
 	public String getEmployeeNumber() {
-		return employeeNumber;
+		return this.employeeNumber;
 	}
 
 	public Experience getExperience() {
-		return experience;
+		return this.experience;
 	}
 
 	public void setExperience(Experience experience) {
 		this.experience = experience;
 	}
 	
-	// implements Validable
+	@Override
 	public void validate(ValidationResults results) {
 		super.validate(results);
-		if (this.employeeNumber == null || ! Utilities.isWordFromDigits(this.employeeNumber))
+		if (this.employeeNumber == null || 
+				! Utilities.isWordFromDigits(this.employeeNumber) ||
+				employeeNumber.length() != Utilities.EMPLOYEE_NUMBER_LENGTH)
 			results.getErrors().add("Wrong employee number");
 		if (this.experience == null)
 			results.getErrors().add("Wrong experiece");
@@ -54,13 +63,15 @@ public class CustomsOfficer extends Person implements Validable{
 	/* return true if officer name and surname set to smth */
 	@Override
 	public boolean isAllValuesSet() {				
-		return (super.isAllValuesSet() && employeeNumber != null && experience != null);
+		return (super.isAllValuesSet() && 
+				this.employeeNumber != null && 
+				this.experience != null);
 	}
 	
 	@Override		/* Return information about officer */
 	public String toString() {
 		return super.toString() 
-			+ "Employee no.:" + employeeNumber + "\n"
-			+ "Experience: " + experience + "\n";
+			+ "Employee no.:" + this.employeeNumber + " "
+			+ "Experience: " + this.experience + " ";
 	}
 }

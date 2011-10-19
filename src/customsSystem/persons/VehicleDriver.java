@@ -7,7 +7,7 @@ public class VehicleDriver extends Passenger implements Validable{
 	/*
 	 * Galbut atrodo kad sis paveldejimas neatitinka IS-A reikalavimo.
 	 * Taciau pamasciau ir nusprendziau kad driveris kazkuria prasme irgi yra
-	 * passengeris tik kazkuria prasme daugiau atsakomybes turintis zmogus - vairuojatis transporto priemone
+	 * passengeris tik turintis daugiau atsakomybes- vairuojatis transporto priemone
 	 */
 
 	private String driverLicenseNumber = null;
@@ -32,21 +32,23 @@ public class VehicleDriver extends Passenger implements Validable{
 		return this.driverLicenseNumber;
 	}
 	
+	@Override
 	public void validate(ValidationResults results) {
 		super.validate(results);
-		if (this.driverLicenseNumber == null || Utilities.isWordFromDigits(this.driverLicenseNumber))
+		if (this.driverLicenseNumber == null || 
+				Utilities.isWordFromDigits(this.driverLicenseNumber))
 			results.getErrors().add("Wrong driver license number");
 	}
 	
 	@Override
 	public boolean isAllValuesSet() {
-		return (super.isAllValuesSet() && personalID != null);
+		return (super.isAllValuesSet() && this.driverLicenseNumber != null);
 	}
 
 	@Override
 	public String toString() {
 		return super.toString() 
-			+ "Drver license no.:" + this.driverLicenseNumber;
+			+ "Driver license no.: " + this.driverLicenseNumber + " ";
 	}
 	
 	

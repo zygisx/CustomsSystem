@@ -6,7 +6,6 @@ import customsSystem.util.*;
 
 public abstract class Person implements Validable{
 	
-	/* in forward this class will be extended */
 	protected String name = null;
 	protected String surname = null;
 	protected String personalID = null;
@@ -22,40 +21,41 @@ public abstract class Person implements Validable{
 			this.surname = surname;
 		if (personalID != null && Utilities.isWordFromDigits(personalID))
 			this.personalID = personalID;
-		
 	}
 	
 	public String getName() {
-		return name;
+		return this.name;
 	}
 	
 	public String getSurname() {
-		return surname;
+		return this.surname;
 	}
 	
 	public String getPersonalID() {
-		return personalID;
+		return this.personalID;
 	}
 
 	public boolean isAllValuesSet() {
-		return (name != null && surname != null && personalID != null);
+		return (this.name != null && 
+				this.surname != null && 
+				this.personalID != null);
 	}
 	
-	// imlements Validable
+	@Override
 	public void validate(ValidationResults results) {
-		if (name == null ||  ! Utilities.isWordFromLetters(name))
-			results.getErrors().add("Wrong name");
-		if (surname == null || ! Utilities.isWordFromLetters(surname)) 
-			results.getErrors().add("Wrong surname");
-		if (personalID == null ||  ! Utilities.isWordFromDigits(personalID))
+		if (this.name == null ||  ! Utilities.isWordFromLetters(this.name))
+			results.getErrors().add("Wrong person name");
+		if (this.surname == null || ! Utilities.isWordFromLetters(this.surname)) 
+			results.getErrors().add("Wrong person surname");
+		if (this.personalID == null ||  ! Utilities.isWordFromDigits(this.personalID))
 			results.getErrors().add("Wrong personal identification code");
 	}
 	
 	@Override
 	public String toString() {
-		return "Name: " + name
-			+ "Surname: " + surname
-			+ "Personal ID: " + personalID ;
+		return "Name: " + this.name + " "
+			+ "Surname: " + this.surname + " "
+			+ "Personal ID: " + this.personalID + " " ;
 	}
 	
 

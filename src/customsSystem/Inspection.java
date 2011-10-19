@@ -7,8 +7,10 @@ import java.util.GregorianCalendar;
 import java.text.SimpleDateFormat;
 
 import customsSystem.persons.CustomsOfficer;
+import customsSystem.util.Validable;
+import customsSystem.util.ValidationResults;
 
-public class Inspection {
+public class Inspection implements Validable{
 	
 	
 	/* For now I consider that in one inspection there is only one officer, 
@@ -81,6 +83,19 @@ public class Inspection {
 	}
 	
 	@Override
+	public void validate(ValidationResults results) {
+		if (this.officer == null)
+			results.getErrors().add("Officer not set");
+		else
+			this.officer.validate(results);
+		if (this.vehicle == null)
+			results.getErrors().add("Vehicle not set");
+		else
+			this.vehicle.validate(results);
+		/* Datos patikrinimo truksta !!!!! */
+	}
+	
+	@Override
 	public String toString() {
 		return "Inspector: " + officer.getName() + " " + officer.getSurname() 
 			+ "\nVehicle: " + vehicle.getVehicleNumber()
@@ -88,5 +103,8 @@ public class Inspection {
 			+ ( (extraDescription != null) ? "Description: " + getDescription() + "\n" : "" )
 			+ ( (date != null) ? "Inspection date: " + dateFormat.format(date.getTime()) + "\n" : "\n" );
 	}
+
+
+	
 	
 }

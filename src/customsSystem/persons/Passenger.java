@@ -5,16 +5,11 @@ import customsSystem.util.*;
 public class Passenger extends Person implements Validable {
 
 	
-	private String nationality = null;
+	protected String nationality = null;
 	
 	
 	public Passenger (String name, String surname, String personalID) {
-		this(name, surname, personalID, "");
-	}
-	
-	public Passenger(String name, String surname, String personalID, String nationality) {
 		super(name, surname, personalID);
-		this.setNationality(nationality);
 	}
 	
 	public void setNationality(String nationality) {
@@ -26,22 +21,24 @@ public class Passenger extends Person implements Validable {
 		return this.nationality;
 	}
 	
-	// implements validable
+	@Override	
 	public void validate(ValidationResults results) {
 		super.validate(results);
-		if (this.nationality == null || ! Utilities.isWordFromLetters(this.nationality))
+		if (this.nationality == null || 
+				! Utilities.isWordFromLetters(this.nationality) ||
+				nationality.length() < 1)  //String must contain at least 1 character. 
 			results.getErrors().add("Wrong nationality");
 	}
 	
 	@Override
 	public boolean isAllValuesSet() {
-		return (super.isAllValuesSet() && nationality != null);
+		return (super.isAllValuesSet() && this.nationality != null);
 	}	
 	
 	@Override
 	public String toString() {
 		return super.toString()
-			+ "Nationality:" + this.nationality;
+			+ "Nationality: " + this.nationality + " ";
 	}
 
 }

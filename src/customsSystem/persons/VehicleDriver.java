@@ -1,8 +1,8 @@
 package customsSystem.persons;
 
-import customsSystem.Utilities;
+import customsSystem.util.*;
 
-public class VehicleDriver extends Passenger {
+public class VehicleDriver extends Passenger implements Validable{
 
 	/*
 	 * Galbut atrodo kad sis paveldejimas neatitinka IS-A reikalavimo.
@@ -30,6 +30,12 @@ public class VehicleDriver extends Passenger {
 	
 	public String getDriverLicenseNumber() {
 		return this.driverLicenseNumber;
+	}
+	
+	public void validate(ValidationResults results) {
+		super.validate(results);
+		if (this.driverLicenseNumber == null || Utilities.isWordFromDigits(this.driverLicenseNumber))
+			results.getErrors().add("Wrong driver license number");
 	}
 	
 	@Override

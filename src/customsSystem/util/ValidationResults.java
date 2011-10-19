@@ -1,8 +1,14 @@
-package customsSystem;
+package customsSystem.util;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Siuo metu gal ir neatrodo kad klase labai naudinga,
+ * taciau sukurus grafine sasaja butu laba patogu begti per text fields
+ * ir spausdinti vartotojui pranesimus kuriuose laukuose ivesta bloga informacija
+ * ir t.t.
+ */
 
 public class ValidationResults {
 	

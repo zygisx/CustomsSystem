@@ -1,9 +1,9 @@
 package customsSystem.persons;
 
-import customsSystem.Utilities;
+import customsSystem.util.*;
 
 
-public class CustomsOfficer extends Person {
+public class CustomsOfficer extends Person implements Validable{
 	
 	public enum  Experience {
 		UNKNOWN, 
@@ -40,6 +40,15 @@ public class CustomsOfficer extends Person {
 
 	public void setExperience(Experience experience) {
 		this.experience = experience;
+	}
+	
+	// implements Validable
+	public void validate(ValidationResults results) {
+		super.validate(results);
+		if (this.employeeNumber == null || ! Utilities.isWordFromDigits(this.employeeNumber))
+			results.getErrors().add("Wrong employee number");
+		if (this.experience == null)
+			results.getErrors().add("Wrong experiece");
 	}
 	
 	/* return true if officer name and surname set to smth */

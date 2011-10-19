@@ -2,10 +2,12 @@ package customsSystem;
 
 import java.util.ArrayList;
 
-import customsSystem.persons.Person;
+import customsSystem.persons.*;
+import customsSystem.util.Validable;
+import customsSystem.util.ValidationResults;
 
 
-public class Vehicle {
+public class Vehicle implements Validable {
 	
 	/* types of vehicle */
 	public enum VehicleType {
@@ -18,8 +20,8 @@ public class Vehicle {
 		OTHER
 	}
 	
-	private Person driver;
-	private ArrayList<Person> passengers = new ArrayList<Person>();
+	private VehicleDriver driver;
+	private ArrayList<Passenger> passengers = new ArrayList<Passenger>();
 	
 	
 	private int weight = 0;	 		/* Weight in kilos. By default weight is 0 kg */  
@@ -29,11 +31,11 @@ public class Vehicle {
 	private VehicleType type;		/* car type moto, car, truck, etc. */
 	
 	
-	public Vehicle(String vehicleNumber, Person driver) {
+	public Vehicle(String vehicleNumber, VehicleDriver driver) {
 		this(vehicleNumber, driver, VehicleType.OTHER, 0);
 	}
 	
-	public Vehicle(String vehicleNumber, Person driver, VehicleType type, int weight) {
+	public Vehicle(String vehicleNumber, VehicleDriver driver, VehicleType type, int weight) {
 		if (vehicleNumber != null)
 			this.vehicleNumber = vehicleNumber;  /* in future exception will be thrown */
 		if (driver != null)
@@ -63,7 +65,7 @@ public class Vehicle {
 			this.weight = weight;
 	}
 
-	public Person getDriver() {
+	public VehicleDriver getDriver() {
 		return driver;
 	}
 	
@@ -87,27 +89,47 @@ public class Vehicle {
 	 * Methods to work with ArrayList
 	 * 
 	 */
-	public void addPassenger(Person passenger) {
+	public void addPassenger(Passenger passenger) {
 		numOfPassengers++;
 		if (passenger != null)			// ToDo exception
 			passengers.add(passenger);
 	}
 	
-	public Person getPassenger(int index) {
+	public Passenger getPassenger(int index) {
 		if ( index > 0 && index < passengers.size() )
 			return passengers.get(index);
 		return null;
 	}
 	
-	public Person getPassenger() {
+	public Passenger getPassenger() {
 		if (! passengers.isEmpty() )
 			return passengers.get(0);
 		return null;
 	}
 	
-	public void removeOfficer (Person passenger) {
+	public void removeOfficer (Passenger passenger) {
 		numOfPassengers--;
 		passengers.remove(passenger);
+	}
+	
+	@Override
+	public void validate(ValidationResults results) {
+		if (this.driver == null) 
+			results.getErrors().add("Driver not set");
+		else
+			this.driver.validate(results);
+		if (this.passengers == null) 
+			results.getErrors().add("Passengers not set");
+		else {
+			for (Passenger p : passengers)
+				p.validate(results);
+		}
+		if (this.weight <= 0) 
+			results.getErrors().add("Wrong weight");
+		if (this.vehicleNumber == null || this.vehicleNumber.length() < 1) 
+			results.getErrors().add("Wrong vehicle number");
+		
+		
 	}
 	
 	@Override
@@ -120,6 +142,8 @@ public class Vehicle {
 			/* only if cargo description is not empty i print it */
 			+ ( (cargoDescription != null) ? "Cargo description: " + cargoDescription + "\n" : "" ); 
 	}
+
+	
 
 
 }

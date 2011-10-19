@@ -1,14 +1,15 @@
 package customsSystem.persons;
 
-import customsSystem.Utilities;
+
+import customsSystem.util.*;
 
 
-public abstract class Person {
+public abstract class Person implements Validable{
 	
 	/* in forward this class will be extended */
-	protected String name;
-	protected String surname;
-	protected String personalID;
+	protected String name = null;
+	protected String surname = null;
+	protected String personalID = null;
 	
 	
 	/*
@@ -38,6 +39,16 @@ public abstract class Person {
 
 	public boolean isAllValuesSet() {
 		return (name != null && surname != null && personalID != null);
+	}
+	
+	// imlements Validable
+	public void validate(ValidationResults results) {
+		if (name == null ||  ! Utilities.isWordFromLetters(name))
+			results.getErrors().add("Wrong name");
+		if (surname == null || ! Utilities.isWordFromLetters(surname)) 
+			results.getErrors().add("Wrong surname");
+		if (personalID == null ||  ! Utilities.isWordFromDigits(personalID))
+			results.getErrors().add("Wrong personal identification code");
 	}
 	
 	@Override

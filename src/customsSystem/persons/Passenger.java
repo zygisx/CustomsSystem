@@ -1,6 +1,8 @@
 package customsSystem.persons;
 
-public class Passenger extends Person {
+import customsSystem.util.*;
+
+public class Passenger extends Person implements Validable {
 
 	
 	private String nationality = null;
@@ -16,11 +18,19 @@ public class Passenger extends Person {
 	}
 	
 	public void setNationality(String nationality) {
-		this.nationality = nationality;
+		if (nationality != null && Utilities.isWordFromLetters(nationality))
+			this.nationality = nationality;
 	}
 	
 	public String getNationality() {
 		return this.nationality;
+	}
+	
+	// implements validable
+	public void validate(ValidationResults results) {
+		super.validate(results);
+		if (this.nationality == null || ! Utilities.isWordFromLetters(this.nationality))
+			results.getErrors().add("Wrong nationality");
 	}
 	
 	@Override

@@ -1,4 +1,4 @@
-package customsSystem;
+package customsSystem.util;
 
 public class Utilities {
 

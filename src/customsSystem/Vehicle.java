@@ -2,13 +2,15 @@ package customsSystem;
 
 import java.util.ArrayList;
 
+import customsSystem.exceptions.*;
 import customsSystem.persons.*;
 import customsSystem.util.Validable;
 import customsSystem.util.ValidationResults;
 
-
-public class Vehicle implements Validable {
+/* class can be extended so it isn't marked as final */
+public class Vehicle implements Validable, Cloneable {
 	
+
 	/* types of vehicle */
 	public enum VehicleType {
 		MOTORCYCLE,
@@ -25,21 +27,22 @@ public class Vehicle implements Validable {
 	
 	
 	private int weight = 0;	 		/* Weight in kilos. By default weight is 0 kg */  
-	private int numOfPassengers = 0;
 	private String vehicleNumber = null;
 	private String cargoDescription = null;		/* Short description of goods in vehicle */
 	private VehicleType type;		/* car type moto, car, truck, etc. */
 	
 	
-	public Vehicle(String vehicleNumber, VehicleDriver driver) {
+	public Vehicle(String vehicleNumber, VehicleDriver driver) 
+			throws CustomsIllegalArgumentException {
 		this(vehicleNumber, driver, VehicleType.OTHER, 0);
 	}
 	
-	public Vehicle(String vehicleNumber, VehicleDriver driver, VehicleType type, int weight) {
-		if (vehicleNumber != null)
-			this.vehicleNumber = vehicleNumber;  /* in future exception will be thrown */
-		if (driver != null)
-			this.driver = driver;
+	public Vehicle(String vehicleNumber, VehicleDriver driver, VehicleType type, int weight) 
+			throws CustomsIllegalArgumentException {  /* setWeight throws CustomIllegalArgumentException */
+		if (vehicleNumber == null || driver == null)
+			throw new CustomsNullArgumentException("Null argument.");	
+		this.driver = driver;
+		this.vehicleNumber = vehicleNumber; 
 		this.setType(type);
 		this.setWeight(weight);
 	}
@@ -48,7 +51,7 @@ public class Vehicle implements Validable {
 		return this.type;
 	}
 	
-	// ToDo exception
+	// exception nereikia nes leidziu paduoti null
 	public void setType(VehicleType type) {
 		if (type != null)
 			this.type = type;
@@ -60,9 +63,12 @@ public class Vehicle implements Validable {
 		return this.weight;
 	}
 
-	public void setWeight(int weight) {
-		if (weight > 0)
-			this.weight = weight;
+	
+	public void setWeight(int weight) 
+			throws CustomsIllegalArgumentException {
+		if (weight < 0)
+			throw new CustomsIllegalArgumentException("Illegal argument");
+		this.weight = weight;
 	}
 
 	public VehicleDriver getDriver() {
@@ -76,71 +82,71 @@ public class Vehicle implements Validable {
 	public String getCargoDescription() {
 		return this.cargoDescription;
 	}
-
+	
+	/* description can be null */
 	public void setCargoDescription(String cargoDescription) {
 		this.cargoDescription = cargoDescription;
 	}
 
 	public int getNumOfPassengers() {
-		return this.numOfPassengers;
+		return this.passengers.size();
 	}
 	
 	/*
 	 * Methods to work with ArrayList
 	 * 
 	 */
-	public void addPassenger(Passenger passenger) {
-		this.numOfPassengers++;
-		if (passenger != null)			// ToDo exception
-			passengers.add(passenger);
+	public void addPassenger(Passenger passenger) 
+			throws CustomsNullArgumentException {
+		if (passenger == null)	
+			throw new CustomsNullArgumentException("Null argument.");
+		this.passengers.add(passenger);
 	}
 	
-	public Passenger getPassenger(int index) {
-		if ( index > 0 && index < this.passengers.size() )
-			return this.passengers.get(index);
-		return null;
-	}
-	
-	public Passenger getPassenger() {
-		if (! this.passengers.isEmpty() )
-			return this.passengers.get(0);
-		return null;
-	}
-	
-	public void removeOfficer (Passenger passenger) {
-		this.numOfPassengers--;
-		this.passengers.remove(passenger);
+	public Passenger getPassenger(int index) throws CustomsIllegalArgumentException { 
+		if (index < 0 || index >= this.getNumOfPassengers() )
+			throw new CustomsIllegalArgumentException("Wrong index.");
+		return this.passengers.get(index); 
 	}
 	
 	@Override
 	public void validate(ValidationResults results) {
-		if (this.driver == null) 
-			results.getErrors().add("Driver not set");
-		else
-			this.driver.validate(results);
-		if (this.passengers == null) 
-			results.getErrors().add("Passengers not set");
-		else {
-			for (Passenger p : passengers)	// validate all passengers
-				p.validate(results);
+		/*	paprastai daugelyje saliu numeris susideda 
+			is 6 ir daugiau simboliu, taciau buna vardiniu ir kitokiu todel negalima vienareiksmiskai uzdrausti tokiu 
+			numeriu ivedino, vartotojas yra tik perspejamas del galimai blogai ivesto numerio
+		 */
+		if (this.vehicleNumber.length() < 6) {
+			results.getWarnings().add("Posibly vehicle number to short");  
 		}
-		if (this.weight <= 0) 
-			results.getErrors().add("Wrong weight");
-		if (this.vehicleNumber == null || this.vehicleNumber.length() < 1) 
-			results.getErrors().add("Wrong vehicle number");
-		
-		
 	}
 	
 	@Override
 	public String toString() {
-		return "Vehicle type: " + type + "\n"
-			+ "Vehicle No.: " + vehicleNumber + "\n"
-			+ "Driver:\n " + driver.getName() + " " + driver.getSurname() +"\n"
-			+ "Weight: " + weight + " kg\n"
-			+ "Number of passengers: " + numOfPassengers + "\n"
+		return "Vehicle type: " + this.type + "\n"
+			+ "Vehicle No.: " + this.vehicleNumber + "\n"
+			+ "Driver:\n " + this.driver.getName() + " " + this.driver.getSurname() +"\n"
+			+ "Weight: " + this.weight + " kg\n"
+			+ "Number of passengers: " + this.getNumOfPassengers() + "\n"
 			/* only if cargo description is not empty i print it */
-			+ ( (cargoDescription != null) ? "Cargo description: " + cargoDescription + "\n" : "" ); 
+			+ ( (cargoDescription != null) ? "Cargo description: " + this.cargoDescription + "\n" : "" ); 
+	}
+	
+	@Override
+	public Vehicle clone() {
+		Vehicle result;
+		try { 
+			result = (Vehicle) super.clone();
+			
+			result.driver = (VehicleDriver) driver.clone();
+			result.passengers = (ArrayList<Passenger>) passengers.clone();
+			for (Passenger p : result.passengers) {
+				p = p.clone();
+			}
+		}
+		catch (Exception ex) {
+			throw new RuntimeException("Clone failure.", ex);
+		}
+		return result;
 	}
 
 	

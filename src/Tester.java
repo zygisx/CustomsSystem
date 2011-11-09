@@ -1,10 +1,20 @@
-import java.util.ArrayList;
-
-import customsSystem.*;
+import customsSystem.Customs;
+import customsSystem.Inspection;
+import customsSystem.Vehicle;
 import customsSystem.Vehicle.VehicleType;
-import customsSystem.persons.*;
-import customsSystem.util.Validable;
-import customsSystem.util.ValidationResults;
+import customsSystem.exceptions.CustomsEmptyListException;
+import customsSystem.exceptions.CustomsException;
+import customsSystem.exceptions.CustomsIllegalArgumentException;
+import customsSystem.exceptions.CustomsNullArgumentException;
+import customsSystem.exceptions.CustomsUnknownOfficerException;
+import customsSystem.persons.CustomsOfficer;
+import customsSystem.persons.CustomsOfficer.Experience;
+import customsSystem.persons.Passenger;
+import customsSystem.persons.Person;
+import customsSystem.persons.VehicleDriver;
+
+
+import java.util.ArrayList;
 
 
 
@@ -12,9 +22,166 @@ public class Tester {
 
 	public static void main (String args[]) {
 		
-		/*
-		Naudoju masyvus kad lengviau butu galima sukurti daug objektu.
-		*/
+		Customs customs = null, customsClone = null;
+		
+		try {
+			
+			// clone CustomsOfficer
+			CustomsOfficer p = new CustomsOfficer("Jonas", "Jonaitis", "12345");
+			CustomsOfficer pp = p.clone();
+			pp.setExperience(Experience.HEAD);
+			pp.setEmployeeNumber("1651315313841684");
+		
+			
+			// clone Vehicle
+			Vehicle v = new Vehicle("ABC526" ,new VehicleDriver("Jonas", "Jonukas", "5846846"));
+			v.addPassenger(new Passenger("Indre", "Gatelyte", "35648618"));
+			Vehicle vv = v.clone();
+			vv.addPassenger(new Passenger("Zygis", "Gat", "695213"));
+			vv.setType(VehicleType.CAR);
+			
+			// clone Inspection
+			Inspection i = new Inspection(p, v);
+			i.setDate(2011, 11, 20);
+			Inspection ii = i.clone();
+			ii.setDate();
+			ii.getVehicle().setType(VehicleType.MOTORCYCLE);
+			
+			
+			// creation of few more objects 
+			CustomsOfficer c1 = new CustomsOfficer("Jonas", "Petraitis", "123456");
+			CustomsOfficer c2 = new CustomsOfficer("Justas", "Sinkevičius", "123458");
+			CustomsOfficer c3 = new CustomsOfficer("Ilona", "Jusyte", "123459");
+			
+			Inspection i1 = new Inspection(c1, v);
+			Inspection i2 = new Inspection(c2, v);
+			Inspection i3 = new Inspection(c1, v);
+			Inspection i4 = new Inspection(c2, v);
+			Inspection i5 = new Inspection(c3, v);
+			Inspection i6 = new Inspection(c1, v);
+			
+			// Customs 
+			customs = new Customs("PL", "Lazdijų pasienio punktas.");
+			customs.addOfficer(p);
+			customs.addOfficer(c1);
+			customs.addOfficer(c2);
+			customs.addOfficer(c3);
+			
+			customs.addInspection(i);
+			customs.addInspection(i);
+			customs.addInspection(i1);
+			customs.addInspection(i2);
+			customs.addInspection(i3);
+			customs.addInspection(i4);
+			customs.addInspection(i5);
+			customs.addInspection(i6);
+			
+			
+			// clone customs
+			customsClone = customs.clone();
+		
+		}
+		catch (CustomsUnknownOfficerException ex) {
+			System.out.println(ex);
+		}
+		catch (CustomsNullArgumentException ex) {
+			System.out.println(ex);
+		}
+		catch (CustomsIllegalArgumentException ex) {
+			System.out.println("Illegal argument: " + ex);
+		}
+		catch (CustomsEmptyListException ex) {
+			System.out.println(ex);
+		}
+		catch (CustomsException ex) {
+			System.out.println("Customs exception: " + ex);
+		}
+		
+		// tikrinu ar referencai skirtingi
+		System.out.println("AR NUKLONUOTA MUITINE RODO I KITA ATMINTIES VIETA :\n"
+			+ ( customs == customsClone));
+		
+		for (int i = 0; i < customs.getInspectionsNum(); i++) {
+			try {
+				if (customs.getInspection(i) == customsClone.getInspection(i) )
+					System.out.println("FAIL. Klonavimas veikia blogai, rodoma i ta pacia atminties vieta.");
+				System.out.println(i);
+			} catch (CustomsIllegalArgumentException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		for (int i = 0; i < customsClone.getOfficersNum(); i++) {
+			try {
+				if (customs.getOfficer(i).equals(customsClone.getOfficer(i)) )
+					System.out.println(customs.getOfficer(i));
+			} catch (CustomsIllegalArgumentException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		/* parodau jog klone kazka pakeitus nepasikeis originalas */
+		System.out.println("\nPries pakeitima:\nMuitine turi " + customs.getOfficersNum() + " muitininkus" +
+				"\nKlonuota muitine turi " + customsClone.getOfficersNum() + " muitininkus");
+		
+		System.out.println("\nIsmetu du muitininkus is klonuotos muitines..");
+		
+		try {
+			customsClone.removeOfficer(1);
+			customsClone.removeOfficer(1);
+		} catch (CustomsIllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			System.out.println(e);
+		} 
+		
+		System.out.println("\nPo pakeitimo:\nMuitine turi " + customs.getOfficersNum() + " muitininkus" +
+				"\nKlonuota muitine turi " + customsClone.getOfficersNum() + " muitininkus");
+		
+		
+		/* dar karta */
+		try {
+			System.out.println("\n\nKitas:\nPries pakeitima:\nMuitines pirmo patikrinimo darta: " + customs.getInspection().getDateAsString() 
+					+ "\nKlonuotos muitines pirmo patikrinimo data: " + customsClone.getInspection().getDateAsString() );
+		
+		
+			System.out.println("Pakeiciu pirmo patikrinimo data i 2011 12 31");
+			customs.getInspection().setDate(2011, 11, 31);
+		
+		
+			System.out.println("Po pakeitimo:\nMuitines pirmo patikrinimo darta: " + customs.getInspection().getDateAsString() 
+					+ "\nKlonuotos muitines pirmo patikrinimo data: " + customsClone.getInspection().getDateAsString() );
+		} catch (CustomsEmptyListException e) {
+			e.printStackTrace();
+		}
+		
+		
+		System.out.println("\n\nGAUDAU TYCIA PADARYTUS EXCEPTIONUS:\n");
+		try {
+			customs.removeOfficer(99);
+			
+		}
+		catch (CustomsIllegalArgumentException ex) {
+			System.out.println(ex);
+		} 
+		try {
+			customs.getOfficer().setEmployeeNumber(null);
+		}
+		catch (CustomsEmptyListException ex) {
+			System.out.println(ex);
+			ex.printStackTrace();
+		} catch (CustomsIllegalArgumentException e) {
+			System.out.println(e);
+			//e.printStackTrace();
+		}
+		
+		
+		
+		
+		/****************************************************************************************************
+		 * SENAS KODAS:
+		 
+		 
+		 
 		String[] names = {"Jonas", "Petras", "Juozas", "Ilona", "Agne", "Jurgis", "Justas", "Rimas", "Marija",
 				"Julius", "Daiva", "Marius", "Evaldas" 
 		};
@@ -25,9 +192,9 @@ public class Tester {
 				"75669", "41564", "54654", "45468", "45687"
 		};
 		
-		/* Polimorfizmo demonstracija */
-		ArrayList<Person> p = new ArrayList<Person>(); 
-		
+		// Polimorfizmo demonstracija 
+		ArrayList<Person> p = new ArrayList<Person>();
+
 		// sukuriu 4 Passenger
 		for (int i = 0; i < 4; i++)
 			p.add(new Passenger(names[i], surnames[i], id[i]));
@@ -65,19 +232,10 @@ public class Tester {
 		
 		v2.setCargoDescription("Leistina tabako norma. Maistas. Buitiniai daiktai.");
 		
-		System.out.println("\n\nInterface Validable demostravimas: ");
-		System.out.println("Visu Person saraso objektu lauku patikrinimas ir klaidu log atspausdinimas");
 		
-		ValidationResults v = new ValidationResults();
-		ArrayList<Validable> list = new ArrayList<Validable>(p);
-		list.add(v1); list.add(v2); list.add(v3);
+		*/  //END
 		
-		for (Validable v0 : list) {
-			v0.validate(v);
-		}
 		
-		System.out.println(v);
-	
 		
 		/* *******************************************************************************************
 		*******--- Uzkomentuoju sena koda -----------------------

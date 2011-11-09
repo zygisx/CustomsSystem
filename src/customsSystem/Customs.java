@@ -2,116 +2,144 @@ package customsSystem;
 
 import java.util.ArrayList;
 
+import customsSystem.exceptions.*;
 import customsSystem.persons.CustomsOfficer;
 
-public class Customs {
+
+public final class Customs implements Cloneable {
 	
 	private ArrayList<CustomsOfficer> officers = new ArrayList<CustomsOfficer>();  /* All officers in customs */
 	private ArrayList<Inspection> inspections = new ArrayList<Inspection>();      /* All registered Inspections */
 	
 	
-	private String borderWith = null; 	/* With which country customs has border */
-	private String customsName = null;	/* Customs name. */ 
+	private final String borderWith; 	/* With which country customs has border */
+	private final String customsName;	/* Customs name. */ 
 	
-	public Customs(String borderWith, String customsName) {
-		if (borderWith != null)					/* add exception in forward tasks */
-			this.borderWith = borderWith;
-		if (customsName != null)
-			this.customsName = customsName;
+	public Customs(String borderWith, String customsName) 
+			throws CustomsNullArgumentException {
+		if (borderWith == null || customsName == null)					
+			throw new CustomsNullArgumentException("Null argument");
+		this.borderWith = borderWith;
+		this.customsName = customsName;
 	}
 
 	public String getCustomsName() {
-		return customsName;
+		return this.customsName;
 	}
 
 	public String getBorderCountry() {
-			return borderWith;
+			return this.borderWith;
 	}
 	
 	/*
 	 * Methods to work with officers ArrayList
 	 */
 	public int getOfficersNum () {
-		return officers.size();
+		return this.officers.size();
 	}
 	
-	public void addOfficer (CustomsOfficer officer) {
-		if (officer != null)
-			officers.add(officer);
+	public void addOfficer (CustomsOfficer officer) 
+			throws CustomsNullArgumentException {
+		if (officer == null)
+			throw new CustomsNullArgumentException("Null argument.");
+		this.officers.add(officer);
 	}
 	
-	public boolean removeOfficer (CustomsOfficer officer) {
-		if (officer != null)
-			return officers.remove(officer);		
-		return false;
+	public boolean removeOfficer (CustomsOfficer officer) 
+			throws CustomsNullArgumentException {
+		if (officer == null)
+			throw new CustomsNullArgumentException("Null argument");
+		return this.officers.remove(officer);		
 	}
 	
-	public void removeOfficer (int index) {
-		if (index >=0 && index < getOfficersNum())
-			officers.remove(index);		
+	public void removeOfficer (int index) 
+			throws CustomsIllegalArgumentException {
+		if (index < 0 || index > this.getOfficersNum() )
+			throw new CustomsIllegalArgumentException("Wrong index.");
+		this.officers.remove(index);	
 	}
 	
 	public boolean isAvailableOfficers () {
-		return ! officers.isEmpty();
+		return ! this.officers.isEmpty();
 	}
 
-	public CustomsOfficer getRandomOfficer() {
-		if ( isAvailableOfficers() )
-			return officers.get( (int) (officers.size() * Math.random()));
-		return null;	/* do nothing if list is empty */
+	public CustomsOfficer getRandomOfficer() 
+			throws CustomsEmptyListException {
+		if ( ! this.isAvailableOfficers() )
+			throw new CustomsEmptyListException("Try to reach element in empty list.");
+		return officers.get( (int) (officers.size() * Math.random()));
 	}
 	
-	// ToDo: exception
-	public CustomsOfficer getOfficer() {
-		if ( isAvailableOfficers() )
-			return officers.get(0);
-		return null;	/* do nothing if list is empty */
+
+	public CustomsOfficer getOfficer() 
+			throws CustomsEmptyListException {
+		if ( ! this.isAvailableOfficers() )
+			throw new CustomsEmptyListException("Try to reach element in empty list.");
+		return this.officers.get(0);   
 	}
-	// ToDo: exception
-	public CustomsOfficer getOfficer(int index) {
-		if (index >= 0 && index < getOfficersNum ())
-			return officers.get(index);
-		return null;
+
+	public CustomsOfficer getOfficer(int index) 
+			throws CustomsIllegalArgumentException {
+		if (index < 0 || index > this.getOfficersNum() )
+			throw new CustomsIllegalArgumentException("Wrong index.");
+		return this.officers.get(index); 
+	}
+	
+	public boolean containsOfficer(CustomsOfficer officer) 
+			throws CustomsNullArgumentException {
+		if (officer == null)
+			throw new CustomsNullArgumentException("Null argument.");
+		for (CustomsOfficer c : officers) {
+			if ( c.getPersonalID().equals(officer.getPersonalID()) )
+				return true;
+		}
+		return false;
 	}
 	
 	/* 
 	 * Methods to work with inspections ArrayList
 	 */
 	public int getInspectionsNum () {
-		return inspections.size();
+		return this.inspections.size();
 	}
 	
-	public void addInspection (Inspection inspection) {
-		if (inspection != null)
-			inspections.add(inspection);
+	public void addInspection (Inspection inspection) 
+			throws CustomsException {
+		if (inspection == null)
+			throw new CustomsNullArgumentException("Null argument.");
+		if (! this.containsOfficer(inspection.getOfficer()) )
+			throw new CustomsUnknownOfficerException("Illegal offiser.");
+		this.inspections.add(inspection);
 	}
 	
-	public boolean removeInspection (Inspection inspection) {
-		if (inspection != null)
-			return inspections.remove(inspection);
-		return false;
+	public boolean removeInspection (Inspection inspection) 
+			throws CustomsNullArgumentException {
+		if (inspection == null)
+			throw new CustomsNullArgumentException("Null argument.");
+		return this.inspections.remove(inspection);
 	}
 	
-	public void removeInspection (int index) {
-		if (index >=0 && index < getInspectionsNum())
-			inspections.remove(index);		/* nors pats remove apdoroja klaidas*/
+	public void removeInspection (int index) 
+			throws CustomsIllegalArgumentException {
+		if (index < 0 || index > this.getOfficersNum() )
+			throw new CustomsIllegalArgumentException("Wrong index.");
+		this.inspections.remove(index);	
 	}
 	
 	public boolean isAnyInspections () {
-		return ! inspections.isEmpty();
+		return ! this.inspections.isEmpty();
 	}
 	
-	// ToDo: exception
-	public Inspection getInspection() {
-		if ( isAnyInspections() )
-			return inspections.get(0);
-		return null;	/* do nothing if list is empty */
+	public Inspection getInspection() throws CustomsEmptyListException {
+		if ( ! this.isAnyInspections() )
+			throw new CustomsEmptyListException("Try to reach element in empty list.");
+		return this.inspections.get(0);
 	}
-	// ToDo: exception
-	public Inspection getInspection(int index) {
-		if (index >= 0 && index < getInspectionsNum())
-			return inspections.get(index);
-		return null;
+
+	public Inspection getInspection(int index) throws CustomsIllegalArgumentException {
+		if (index < 0 || index >= this.getInspectionsNum() )
+			throw new CustomsIllegalArgumentException("Wrong index.");
+		return this.inspections.get(index);	
 	}
 
 	@Override
@@ -122,6 +150,40 @@ public class Customs {
 		str += "Number of officers: " + getOfficersNum() + "\n";
 		str += "Number of inspections: " + getInspectionsNum();
 		return str;
+	}
+
+	@Override
+	public Customs clone() {
+		Customs result;
+		try {
+			result = (Customs) super.clone();
+			/* clone all officers */
+			result.officers = new ArrayList<CustomsOfficer>();
+			for (CustomsOfficer o : this.officers) {
+				result.officers.add((CustomsOfficer) o.clone());
+			}
+			/* clone all inspections */
+			result.inspections = new ArrayList<Inspection>();
+			for (Inspection i : this.inspections) {
+				result.inspections.add((Inspection) i.clone());
+				
+			}
+			/* link all officers in inspection with correct officer from Customs ArrayList */	
+			for (Inspection i : result.inspections) {
+				for (CustomsOfficer c : result.officers ) {
+					if (i.getOfficer().getPersonalID().equals(c.getPersonalID())) {
+						try {
+							i.setOfficer(c);
+						} catch (CustomsNullArgumentException ex) {} //exceptionas negali kilti juk officeris jau viena karta buvo uzsetintas.
+						break;
+					}
+				}
+			}
+		}
+		catch (Exception ex) {
+			throw new RuntimeException("Clone failure.", ex);
+		}
+		return result;
 	}
 	
 	

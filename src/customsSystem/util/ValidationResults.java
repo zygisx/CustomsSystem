@@ -4,32 +4,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 /*
- * Siuo metu gal ir neatrodo kad klase labai naudinga,
- * taciau sukurus grafine sasaja butu laba patogu begti per text fields
- * ir spausdinti vartotojui pranesimus kuriuose laukuose ivesta bloga informacija
- * ir t.t.
+ * Taigi pakeiciau klase, dabar visose klasese patikrinimas (tikroji validacija) vyks konstruktoriuose ir setteriuose, 
+ * ta prasme nebus taip kad pirma sukuriu objekta tik po to validuoju.
+ * Dabar validate metodas prabeks tik pro tam tikrus specifinius laukus ir ValidatioResults saugos perspejimus del galimmu klaidu
+ * pavyzdziui del datos jei data rytojus arba pakankamai toli nuo siandien tai perspesim vartotoja kad galbut jis suklydo del kalidos, taciau
+ * jokiu budu negalim neleisti tokios datos nustatyti nes galbut vartotojui butent to ir reikejo.
+ * Vienu zodziu validable interface pades surasti galimus specifinius netikslumus atributuose.
  */
 
 public class ValidationResults {
 	
-	private final List<String> errors = new ArrayList<String>();
+	private final List<String> warnings = new ArrayList<String>();
 	
 	public ValidationResults() {
 	}
 	
-	public boolean hasErrors() {
-		return errors.size() > 0;
-	}
-	public List<String> getErrors() {
-		return errors;
+	public boolean hasWarnings() {
+		return warnings.size() > 0;
 	}
 	
-	public void clearErrors() {
-		errors.clear();
+	public void clearWarnings() {
+		warnings.clear();
 	}
 	
 	@Override
 	public String toString() {
-		return "Errors: " + errors;
+		return "Warnings: " + warnings;
+	}
+
+	public List<String> getWarnings() {
+		return warnings;
 	}
 }

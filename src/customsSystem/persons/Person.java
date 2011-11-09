@@ -1,54 +1,47 @@
 package customsSystem.persons;
 
 
+import customsSystem.exceptions.*;
 import customsSystem.util.*;
 
 
-public abstract class Person implements Validable{
+public abstract class Person implements Cloneable {
 	
-	protected String name = null;
-	protected String surname = null;
-	protected String personalID = null;
+	protected final String name;
+	protected final String surname;
+	protected final String personalID;
 	
 	
-	/*
-	 * in future exceptions will be included
-	 */
-	public Person(String name, String surname, String personalID) {
-		if (name != null && Utilities.isWordFromLetters(name))
-			this.name = name;
-		if (surname != null && Utilities.isWordFromLetters(surname)) 
-			this.surname = surname;
-		if (personalID != null && Utilities.isWordFromDigits(personalID))
-			this.personalID = personalID;
+	public Person(String name, String surname, String personalID) 
+			throws CustomsIllegalArgumentException {
+		if (name == null || surname == null || personalID == null)
+			throw new CustomsNullArgumentException("Null argument.");
+		if (! Utilities.isWordFromLetters(name) || 
+				! Utilities.isWordFromLetters(surname) || 
+				! Utilities.isWordFromDigits(personalID) )
+			throw new CustomsIllegalArgumentException("Illegal argument.");
+		this.name = name;
+		this.surname = surname;
+		this.personalID = personalID;
 	}
 	
-	public String getName() {
+	public final String getName() {
 		return this.name;
 	}
 	
-	public String getSurname() {
+	public final String getSurname() {
 		return this.surname;
 	}
 	
-	public String getPersonalID() {
+	public final String getPersonalID() {
 		return this.personalID;
 	}
 
+	/* supratnu kad atsiradus exception sitas metodas beprasmis bet dar kolkas jo netryniau */
 	public boolean isAllValuesSet() {
 		return (this.name != null && 
 				this.surname != null && 
 				this.personalID != null);
-	}
-	
-	@Override
-	public void validate(ValidationResults results) {
-		if (this.name == null ||  ! Utilities.isWordFromLetters(this.name))
-			results.getErrors().add("Wrong person name");
-		if (this.surname == null || ! Utilities.isWordFromLetters(this.surname)) 
-			results.getErrors().add("Wrong person surname");
-		if (this.personalID == null ||  ! Utilities.isWordFromDigits(this.personalID))
-			results.getErrors().add("Wrong personal identification code");
 	}
 	
 	@Override
@@ -57,6 +50,18 @@ public abstract class Person implements Validable{
 			+ "Surname: " + this.surname + " "
 			+ "Personal ID: " + this.personalID + " " ;
 	}
+
+	@Override
+	public Person clone() {
+		try {
+			return (Person) super.clone();
+		}
+		catch (Exception ex) {
+			throw new RuntimeException("Clone failure.", ex);
+		}
+	}
+
+
 	
 
 }

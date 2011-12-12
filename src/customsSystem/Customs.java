@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import customsSystem.exceptions.*;
 import customsSystem.persons.CustomsOfficer;
+import customsSystem.persons.VehicleDriver;
 
 
 /**
@@ -196,7 +197,7 @@ public final class Customs implements Cloneable {
 		if (inspection == null)
 			throw new CustomsNullArgumentException("Null argument.");
 		if (! this.containsOfficer(inspection.getOfficer()) )
-			throw new CustomsUnknownOfficerException("Illegal offiser.");
+			throw new CustomsUnknownOfficerException("Illegal offiser. Offiser not registred in customs.");
 		this.inspections.add(inspection);
 	}
 	
@@ -267,6 +268,36 @@ public final class Customs implements Cloneable {
 		if (index < 0 || index >= this.getInspectionsNum() )
 			throw new CustomsIllegalArgumentException("Wrong index.");
 		return this.inspections.get(index);	
+	}
+	
+	public boolean checkVehicle(Vehicle v) 
+			throws CustomsNullArgumentException {
+		if (v == null) {
+			throw new CustomsNullArgumentException("Null argument");
+		}
+		for (Inspection i : inspections) {
+			if (v.getVehicleNumber().equals(i.getVehicle().getVehicleNumber())) {
+				if (! i.isSuccessful()) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	public boolean checkDriver(VehicleDriver d) 
+			throws CustomsNullArgumentException {
+		if (d == null) {
+			throw new CustomsNullArgumentException("Null argument");
+		}
+		for (Inspection i : inspections) {
+			if (d.getPersonalID().equals(i.getVehicle().getDriver().getPersonalID())) {
+				if (! i.isSuccessful()) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	
 	/**

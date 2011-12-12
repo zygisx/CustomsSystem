@@ -10,7 +10,6 @@ import customsSystem.exceptions.CustomsUnknownOfficerException;
 import customsSystem.persons.CustomsOfficer;
 import customsSystem.persons.CustomsOfficer.Experience;
 import customsSystem.persons.Passenger;
-import customsSystem.persons.Person;
 import customsSystem.persons.VehicleDriver;
 
 
@@ -82,10 +81,10 @@ public class Tester {
 		
 		}
 		catch (CustomsUnknownOfficerException ex) {
-			System.out.println(ex);
+			System.out.println("Unknown officer: " + ex);
 		}
 		catch (CustomsNullArgumentException ex) {
-			System.out.println(ex);
+			System.out.println("Null argument: " + ex);
 		}
 		catch (CustomsIllegalArgumentException ex) {
 			System.out.println("Illegal argument: " + ex);

@@ -38,7 +38,7 @@ public class MainPanel extends JPanel {
 		
 		
 		rdbtnAddNewInspection.setSelected(true);
-		rdbtnAddNewInspection.setActionCommand(customsSystem.gui.InspectionPanel.ADD_INSPECTION_PANEL);
+		rdbtnAddNewInspection.setActionCommand(customsSystem.gui.InspectionPanel.ADD_INSPECTION_1);
 		
 		
 		JRadioButton rdbtnShowTodaysInspections = new JRadioButton("show todays inspections");

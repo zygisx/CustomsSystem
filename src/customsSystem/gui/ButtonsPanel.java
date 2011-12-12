@@ -13,6 +13,7 @@ public class ButtonsPanel extends JPanel {
 	public final static String CANCEL = "cancel";
 	public final static String CONFIRM = "confirm";
 	public final static String OK = "ok";
+
 	
 	private ActionListener listener = null;
 	private JButton btnCancel;
@@ -45,14 +46,22 @@ public class ButtonsPanel extends JPanel {
 	public void setCancel(boolean a){
 		btnCancel.setEnabled(a);
 	}
+	public void setCancelName(String a) {
+		btnCancel.setText(a);
+	}
 	
 	public void setOk(boolean a){
 		btnOk.setEnabled(a);
 	}
-	
+	public void setOkName(String a) {
+		btnOk.setText(a);
+	}
 	
 	public void setConfirm(boolean a){
 		btnConfirm.setEnabled(a);
+	}
+	public void setConfirmName(String a) {
+		btnConfirm.setText(a);
 	}
 
 }

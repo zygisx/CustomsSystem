@@ -20,7 +20,8 @@ import customsSystem.exceptions.CustomsIllegalArgumentException;
 import customsSystem.exceptions.CustomsNullArgumentException;
 import customsSystem.exceptions.CustomsUnknownOfficerException;
 import customsSystem.gui.inspectionTabComponents.MainPanel;
-import customsSystem.gui.inspectionTabComponents.NewInspectionPanel;
+import customsSystem.gui.inspectionTabComponents.NewInspectionPanel1;
+import customsSystem.gui.inspectionTabComponents.NewInspectionPanel2;
 import customsSystem.gui.inspectionTabComponents.TodaysInspections;
 import customsSystem.persons.CustomsOfficer;
 import customsSystem.persons.Passenger;
@@ -37,6 +38,8 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JPanel contentPane;
 	private ButtonsPanel bPanel;
 	private InspectionPanel inspectionPanel;
+	
+	private Vehicle vehicle;
 	
 	
 	private Customs customs = null;
@@ -140,7 +143,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	public MainFrame() {
 		niekas(); //TODO delete this shit
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 600, 600);
+		setBounds(50, 20, 600, 700);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -198,8 +201,8 @@ public class MainFrame extends JFrame implements ActionListener {
 			
 
 		}
-		
-		else if (inspectionPanel.getCurrentPanel().toString() == NewInspectionPanel.NAME) {
+		//NewInspectionPanel1
+		else if (inspectionPanel.getCurrentPanel().toString() == NewInspectionPanel1.NAME) {
 			if (e.getActionCommand().equals(ButtonsPanel.CANCEL)) {
 				
 				((CardLayout)inspectionPanel.getLayout()).first(inspectionPanel);
@@ -207,25 +210,61 @@ public class MainFrame extends JFrame implements ActionListener {
 			}
 			else if (e.getActionCommand().equals(ButtonsPanel.CONFIRM)) {
 				
-				Vehicle v = null;
+				vehicle = null;
 				try {
-					v = inspectionPanel.getNewInspectionPanel().getVehicle();
+					vehicle = inspectionPanel.getNewInspectionPanel1().getVehicle();
+					if (! customs.checkVehicle(vehicle) || ! customs.checkDriver(vehicle.getDriver())) {
+						inspectionPanel.getNewInspectionPanel2().setCheck(2);
+					}
+					else inspectionPanel.getNewInspectionPanel2().setCheck(0);
+					
 				} catch (CustomsIllegalArgumentException e1) {
 					JOptionPane.showMessageDialog(this,
 						    "Wrong parametres for driver or vehicle:\n" + e1.getMessage(),
 						    "Error",
 						    JOptionPane.ERROR_MESSAGE);
-					v = null;
-					//e1.printStackTrace();
+					vehicle = null;
 					
+					
+				}				
+				if (vehicle != null) {
+					//System.out.println(v + "\n" + v.getDriver());
+					((CardLayout)inspectionPanel.getLayout()).show(inspectionPanel, InspectionPanel.ADD_INSPECTION_2);
 				}
-				if (v != null) {
-					System.out.println(v + "\n" + v.getDriver());
-					((CardLayout)inspectionPanel.getLayout()).show(inspectionPanel, InspectionPanel.ADD_END_INSPECTION);
-				}
-	
 			}
-
+		}
+		
+		else if (inspectionPanel.getCurrentPanel().toString() == NewInspectionPanel2.NAME) {
+			if (e.getActionCommand().equals(ButtonsPanel.CANCEL)) {
+				
+				((CardLayout)inspectionPanel.getLayout()).first(inspectionPanel);
+			}
+			else if (e.getActionCommand().equals(ButtonsPanel.OK)) {	
+				Inspection i;
+				try {
+					i = inspectionPanel.getNewInspectionPanel2().getInspection(vehicle);
+					if (i != null) customs.addInspection(i);
+				} catch (CustomsIllegalArgumentException e1) {
+					JOptionPane.showMessageDialog(this,
+						    "Wrong parametres inspection:\n" + e1.getMessage(),
+						    "Error",
+						    JOptionPane.ERROR_MESSAGE);
+					i = null;
+				} catch (CustomsException e2) {
+					JOptionPane.showMessageDialog(this,
+						    "Error:\n" + e2.getMessage(),
+						    "Error",
+						    JOptionPane.ERROR_MESSAGE);
+					i = null;
+				}
+				if (i != null) {
+					inspectionPanel.getNewInspectionPanel1().clearAll();
+					inspectionPanel.getNewInspectionPanel2().clearAll();
+					((CardLayout)inspectionPanel.getLayout()).first(inspectionPanel);
+				}
+				
+			}
+			
 		}
 		
 		else if (inspectionPanel.getCurrentPanel().toString() == TodaysInspections.NAME) {
@@ -245,10 +284,15 @@ public class MainFrame extends JFrame implements ActionListener {
 			bPanel.setCancel(false);
 		}
 		
-		else if (inspectionPanel.getCurrentPanel().toString() == NewInspectionPanel.NAME) {
+		else if (inspectionPanel.getCurrentPanel().toString() == NewInspectionPanel1.NAME) {
 			
 			bPanel.setOk(false);
 			bPanel.setConfirm(true);
+			bPanel.setCancel(true);
+		}
+		else if (inspectionPanel.getCurrentPanel().toString() == NewInspectionPanel2.NAME) {
+			bPanel.setOk(true);
+			bPanel.setConfirm(false);
 			bPanel.setCancel(true);
 		}
 		else if (inspectionPanel.getCurrentPanel().toString() == TodaysInspections.NAME) {

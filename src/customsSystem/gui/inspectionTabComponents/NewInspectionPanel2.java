@@ -150,6 +150,10 @@ public class NewInspectionPanel2 extends JPanel {
 		((DefaultEditor) spinner.getEditor()).getTextField().setEditable(false);
 		panelInspection.add(spinner, "4, 2, left, top");
 		lblYear.setLabelFor(spinner);
+		calendar = Calendar.getInstance();	
+		spinner.setValue(calendar.get(Calendar.YEAR));
+		
+		
 		
 		
 		
@@ -164,6 +168,7 @@ public class NewInspectionPanel2 extends JPanel {
 		spinner_1 = new JSpinner();
 		panelInspection.add(spinner_1, "8, 2, left, top");
 		spinner_1.setModel(new SpinnerNumberModel(1 ,1, 12, 1));
+		spinner_1.setValue(calendar.get(Calendar.MONTH) + 1);
 		
 		lblNewLabel = new JLabel("Day");
 		panelInspection.add(lblNewLabel, "10, 2, left, center");
@@ -171,6 +176,7 @@ public class NewInspectionPanel2 extends JPanel {
 		spinner_2 = new JSpinner();
 		panelInspection.add(spinner_2, "12, 2, left, top");
 		spinner_2.setModel(new SpinnerNumberModel(1 ,1, 31, 1));
+		spinner_2.setValue(calendar.get(Calendar.DAY_OF_MONTH));
 		
 		lblInspectionEnd = new JLabel("Inspection end: ");
 		panelInspection.add(lblInspectionEnd, "14, 2, left, center");
@@ -196,6 +202,7 @@ public class NewInspectionPanel2 extends JPanel {
 				  }  
 				};  
 		table.setPreferredScrollableViewportSize(new Dimension(450, 200));
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		panelOfficer.add(table);
 		
 		JScrollPane scrollPane = new JScrollPane(table);
@@ -206,8 +213,12 @@ public class NewInspectionPanel2 extends JPanel {
 	
 	public void clearAll() {
 		textArea.setText("");
-		ListSelectionModel model = table.getSelectionModel();
-		model.removeSelectionInterval(0,0); 
+		Calendar calendar = Calendar.getInstance();
+		spinner.setValue(calendar.get(Calendar.YEAR));
+		spinner_1.setValue(calendar.get(Calendar.MONTH) + 1);
+		spinner_2.setValue(calendar.get(Calendar.DAY_OF_MONTH));
+		lblCheck.setText("");
+		table.clearSelection();
 	}
 	
 	public Inspection getInspection(Vehicle v) 
@@ -230,6 +241,14 @@ public class NewInspectionPanel2 extends JPanel {
 		}
 		else {
 			i = new Inspection(customs.getOfficer(rowSelected), v);
+			i.setDate(
+				((Integer) (spinner.getValue())), 
+				((Integer) (spinner_1.getValue())),
+				((Integer) (spinner_2.getValue()))
+				);
+			i.setDescription(textArea.getText());
+			i.setSuccessful((comboBox.getSelectedItem().equals("Successful")) ? true : false );
+			
 		}
 		
 		

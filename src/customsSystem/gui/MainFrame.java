@@ -5,6 +5,7 @@ import java.awt.CardLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -38,11 +39,13 @@ public class MainFrame extends JFrame implements ActionListener {
 	private JPanel contentPane;
 	private ButtonsPanel bPanel;
 	private InspectionPanel inspectionPanel;
-	
+	private Random rand;
 	private Vehicle vehicle;
 	
 	
 	private Customs customs = null;
+	
+	private int setting = 30; // percents of yellow inspection possibility 
 
 	
 	
@@ -95,6 +98,11 @@ public class MainFrame extends JFrame implements ActionListener {
 			customs.addInspection(i4);
 			customs.addInspection(i5);
 			customs.addInspection(i6);
+			
+			for (int ind = 0; ind < customs.getInspectionsNum(); ind++) {
+				System.out.println(customs.getInspection(ind));
+			}
+			//System.out.println(customs.getInspectionsNum());
 			
 		}
 		catch (CustomsUnknownOfficerException ex) {
@@ -184,7 +192,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		inspectionPanel = new InspectionPanel(customs);
 		tabbedPane.addTab("Inspections", null, inspectionPanel, null);
 		
-		
+		rand = new Random();
+		System.out.println(customs.getInspectionsNum());
 	}
 
 	@Override
@@ -213,10 +222,12 @@ public class MainFrame extends JFrame implements ActionListener {
 				vehicle = null;
 				try {
 					vehicle = inspectionPanel.getNewInspectionPanel1().getVehicle();
-					if (! customs.checkVehicle(vehicle) || ! customs.checkDriver(vehicle.getDriver())) {
+					if (! customs.checkVehicle(vehicle) || ! customs.checkDriver(vehicle.getDriver())) 
 						inspectionPanel.getNewInspectionPanel2().setCheck(2);
-					}
-					else inspectionPanel.getNewInspectionPanel2().setCheck(0);
+					else if (rand.nextInt(100) < setting) 
+						inspectionPanel.getNewInspectionPanel2().setCheck(1);
+					else 
+						inspectionPanel.getNewInspectionPanel2().setCheck(0);
 					
 				} catch (CustomsIllegalArgumentException e1) {
 					JOptionPane.showMessageDialog(this,
@@ -233,7 +244,7 @@ public class MainFrame extends JFrame implements ActionListener {
 				}
 			}
 		}
-		
+		// NewInspectionPanel2
 		else if (inspectionPanel.getCurrentPanel().toString() == NewInspectionPanel2.NAME) {
 			if (e.getActionCommand().equals(ButtonsPanel.CANCEL)) {
 				
@@ -244,6 +255,7 @@ public class MainFrame extends JFrame implements ActionListener {
 				try {
 					i = inspectionPanel.getNewInspectionPanel2().getInspection(vehicle);
 					if (i != null) customs.addInspection(i);
+					System.out.println(i);
 				} catch (CustomsIllegalArgumentException e1) {
 					JOptionPane.showMessageDialog(this,
 						    "Wrong parametres inspection:\n" + e1.getMessage(),
@@ -268,8 +280,9 @@ public class MainFrame extends JFrame implements ActionListener {
 		}
 		
 		else if (inspectionPanel.getCurrentPanel().toString() == TodaysInspections.NAME) {
+			
 			if (e.getActionCommand().equals(ButtonsPanel.CANCEL)) {
-				
+				inspectionPanel.getTodaysInspections().update();
 				((CardLayout)inspectionPanel.getLayout()).first(inspectionPanel);
 				//inspectionPanel.getNewInspectionPanel().setCheck(1);
 			}
@@ -296,6 +309,9 @@ public class MainFrame extends JFrame implements ActionListener {
 			bPanel.setCancel(true);
 		}
 		else if (inspectionPanel.getCurrentPanel().toString() == TodaysInspections.NAME) {
+			
+			inspectionPanel.getTodaysInspections().update();
+			
 			
 			bPanel.setOk(false);
 			bPanel.setConfirm(false);

@@ -20,7 +20,7 @@ public class InspectionPanel extends JPanel {
 	private JPanel mainPanel;
 	private NewInspectionPanel1 addInspection1 = new customsSystem.gui.inspectionTabComponents.NewInspectionPanel1();
 	private NewInspectionPanel2 addInspection2;
-	private TodaysInspections todays = new customsSystem.gui.inspectionTabComponents.TodaysInspections();
+	private TodaysInspections todays;
 	/**
 	 * Create the panel.
 	 */
@@ -29,6 +29,7 @@ public class InspectionPanel extends JPanel {
 		mainPanel = new customsSystem.gui.inspectionTabComponents.MainPanel(customs);
 		addInspection2 = new customsSystem.gui.inspectionTabComponents.NewInspectionPanel2(addInspection1, customs);
 		
+		todays = new customsSystem.gui.inspectionTabComponents.TodaysInspections(customs);
 		add(mainPanel, MAIN_MENU);
 		add(addInspection1, ADD_INSPECTION_1);
 		add(todays, TODAYS_INSPECTIONS);
@@ -57,6 +58,10 @@ public class InspectionPanel extends JPanel {
 	}
 	public NewInspectionPanel2 getNewInspectionPanel2() {
 		return addInspection2;
+	}
+	
+	public TodaysInspections getTodaysInspections() {
+		return todays;
 	}
 	
 	

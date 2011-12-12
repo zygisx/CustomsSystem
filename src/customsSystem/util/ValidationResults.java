@@ -11,18 +11,32 @@ import java.util.List;
  * jokiu budu negalim neleisti tokios datos nustatyti nes galbut vartotojui butent to ir reikejo.
  * Vienu zodziu validable interface pades surasti galimus specifinius netikslumus atributuose.
  */
-
+/**
+ * Class which helps validating data
+ * @author Žygimantas Gatelis
+ * @version 1.0 
+ */
 public class ValidationResults {
 	
 	private final List<String> warnings = new ArrayList<String>();
 	
+	/**
+	 * Empty constructos.
+	 */
 	public ValidationResults() {
 	}
 	
+	/**
+	 * Returns <code>true</code> if class contains any warnings, <code>false</code> otherwise.
+	 * @return  <code>true</code> if class contains any warnings, <code>false</code> otherwise.
+	 */
 	public boolean hasWarnings() {
 		return warnings.size() > 0;
 	}
 	
+	/**
+	 * Clear warning list.
+	 */
 	public void clearWarnings() {
 		warnings.clear();
 	}
@@ -32,6 +46,10 @@ public class ValidationResults {
 		return "Warnings: " + warnings;
 	}
 
+	/**
+	 * Returns all warnings in list.
+	 * @return all warnings in list.
+	 */
 	public List<String> getWarnings() {
 		return warnings;
 	}

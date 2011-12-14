@@ -92,7 +92,7 @@ public class MainFrame extends JFrame implements ActionListener {
 			
 			// creation of few more objects 
 			CustomsOfficer c1 = new CustomsOfficer("Jonas", "Petraitis", "123456");
-			CustomsOfficer c2 = new CustomsOfficer("Justas", "Sinkevièius", "123458");
+			CustomsOfficer c2 = new CustomsOfficer("Justas", "Sinkeviï¿½ius", "123458");
 			CustomsOfficer c3 = new CustomsOfficer("Ilona", "Jusyte", "123459");
 			c1.setExperience(Experience.JUNIOR);
 			c2.setExperience(Experience.HEAD);
@@ -106,7 +106,7 @@ public class MainFrame extends JFrame implements ActionListener {
 			Inspection i6 = new Inspection(c1, v);
 			
 			// Customs 
-			this.customs = new Customs("PL", "Lazdijø pasienio punktas.");
+			this.customs = new Customs("PL", "Lazdijï¿½ pasienio punktas.");
 			customs.addOfficer(p);
 			customs.addOfficer(c1);
 			customs.addOfficer(c2);
@@ -171,7 +171,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	public MainFrame() {
 		//niekas(); //TODO delete this shit
 		try {
-			this.customs = new Customs("PL", "Lazdijø pasienio punktas.");
+			this.customs = new Customs("PL", "Lazdijï¿½ pasienio punktas.");
 			
 		} catch (CustomsNullArgumentException e) {
 			JOptionPane.showMessageDialog(this,

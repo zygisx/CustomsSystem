@@ -1,41 +1,35 @@
 package customsSystem.gui.inspectionTabComponents;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.util.Calendar;
+
 import javax.swing.BorderFactory;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JSpinner.DefaultEditor;
 import javax.swing.JTable;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
+import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
+
+import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.RowSpec;
 
 import customsSystem.Customs;
 import customsSystem.Inspection;
 import customsSystem.Vehicle;
 import customsSystem.exceptions.CustomsIllegalArgumentException;
-import customsSystem.exceptions.CustomsNullArgumentException;
-import customsSystem.persons.CustomsOfficer;
-import java.awt.Dimension;
-import javax.swing.JScrollPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.JSpinner;
-import javax.swing.JRadioButton;
-import javax.swing.JComboBox;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.factories.FormFactory;
-import com.jgoodies.forms.layout.RowSpec;
-import javax.swing.SpinnerDateModel;
-import java.util.Date;
-import java.util.Calendar;
-import javax.swing.JTextPane;
-import javax.swing.JTextArea;
-import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableModel;
-
-import java.awt.Color;
-import java.awt.Font;
 
 public class NewInspectionPanel2 extends JPanel {
 	

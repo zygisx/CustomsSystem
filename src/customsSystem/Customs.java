@@ -2,9 +2,6 @@ package customsSystem;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.ListIterator;
-
-import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
 import customsSystem.exceptions.*;
 import customsSystem.persons.CustomsOfficer;

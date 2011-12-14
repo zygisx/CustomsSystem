@@ -1,38 +1,31 @@
 package customsSystem.gui.inspectionTabComponents;
 
-import javax.swing.JPanel;
-import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
-import java.awt.Font;
-import javax.swing.JInternalFrame;
-import javax.swing.BoxLayout;
-import javax.swing.JTextField;
-import java.awt.FlowLayout;
-import javax.swing.JComboBox;
-import javax.swing.SpringLayout;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
+
 import com.jgoodies.forms.factories.FormFactory;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.RowSpec;
-import com.sun.java.swing.plaf.nimbus.ComboBoxComboBoxArrowButtonPainter;
 
 import customsSystem.Vehicle;
 import customsSystem.Vehicle.VehicleType;
 import customsSystem.exceptions.CustomsIllegalArgumentException;
 import customsSystem.persons.VehicleDriver;
 import customsSystem.util.Utilities;
-
-import javax.swing.JTextPane;
-import java.awt.Color;
-import javax.swing.JFormattedTextField;
-import javax.swing.JTextArea;
 
 public class NewInspectionPanel1 extends JPanel {
 	

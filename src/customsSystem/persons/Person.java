@@ -1,6 +1,8 @@
 package customsSystem.persons;
 
 
+import java.io.Serializable;
+
 import customsSystem.exceptions.*;
 import customsSystem.util.*;
 
@@ -9,7 +11,7 @@ import customsSystem.util.*;
  * @author Žygimantas Gatelis
  * @version 1.0 
  */
-public abstract class Person implements Cloneable {
+public abstract class Person implements Cloneable, Serializable {
 	
 	protected final String name;
 	protected final String surname;
@@ -27,9 +29,10 @@ public abstract class Person implements Cloneable {
 	 */
 	public Person(String name, String surname, String personalID) 
 			throws CustomsIllegalArgumentException {
-		if (name == null || surname == null || personalID == null
-				|| name.equals("") || surname.equals("") || personalID.equals(""))
+		if (name == null || surname == null || personalID == null)
 			throw new CustomsNullArgumentException("Null argument.");
+		if (name.equals("") || surname.equals("") || personalID.equals(""))
+			throw new CustomsIllegalArgumentException("Empty argument.");
 		if (! Utilities.isWordFromLetters(name) || 
 				! Utilities.isWordFromLetters(surname) || 
 				! Utilities.isWordFromDigits(personalID) )

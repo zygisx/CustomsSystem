@@ -1,5 +1,7 @@
 package customsSystem.persons;
 
+import java.io.Serializable;
+
 import customsSystem.exceptions.*;
 import customsSystem.util.*;
 
@@ -8,7 +10,7 @@ import customsSystem.util.*;
  * @author Žygimantas Gatelis
  * @version 1.0 
  */
-public class CustomsOfficer extends Person implements Validable, Cloneable {
+public class CustomsOfficer extends Person implements Validable, Cloneable, Serializable {
 	
 	/**
 	 * Enumeration contains officers types.
@@ -85,6 +87,10 @@ public class CustomsOfficer extends Person implements Validable, Cloneable {
 			throws CustomsIllegalArgumentException {
 		if (employeeNumber == null) 
 			throw new CustomsNullArgumentException("Null argument.");
+		/*
+		if (employeeNumber.equals(""))
+			throw new CustomsIllegalArgumentException("Empty employee number.");
+		*/
 		if (! Utilities.isWordFromDigits(employeeNumber) )
 			throw new CustomsIllegalArgumentException("Illegal argument.");
 		this.employeeNumber = employeeNumber;

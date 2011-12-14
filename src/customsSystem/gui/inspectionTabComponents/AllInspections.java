@@ -1,44 +1,35 @@
 package customsSystem.gui.inspectionTabComponents;
 
-import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JLabel;
-import java.awt.Font;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
-import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import customsSystem.Customs;
-import customsSystem.Inspection;
 import customsSystem.exceptions.CustomsIllegalArgumentException;
-import javax.swing.JButton;
-import java.awt.FlowLayout;
-import javax.swing.BoxLayout;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
-public class TodaysInspections extends JPanel {
+public class AllInspections extends JPanel {
 
-	public static final String NAME = "today";
+	public static final String NAME = "all";
 	private JTable table;
 	private Customs customs;
-	private ArrayList<Inspection> todaysInspections;
-	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	/**
 	 * Create the panel.
 	 */
-	public TodaysInspections(Customs customs) {
+	public AllInspections(Customs customs) {
 		this.customs = customs;
 		setLayout(new BorderLayout(0, 0));
 		
@@ -57,25 +48,23 @@ public class TodaysInspections extends JPanel {
 						    JOptionPane.ERROR_MESSAGE);
 				}
 				else {
-					new DetailInspectionInfo(TodaysInspections.this.todaysInspections.get(rowSelected));
+					try {
+						new DetailInspectionInfo(AllInspections.this.customs.getInspection(rowSelected));
+					} catch (CustomsIllegalArgumentException e) {
+						JOptionPane.showMessageDialog(null,
+							    "Error. " + e.getMessage(),
+							    "Error",
+							    JOptionPane.ERROR_MESSAGE);
+					}
 				}
 				
 			}
 		});
 		panel_1.add(btnDetailInformation);
 		
-		JPanel panel = new JPanel();
-		add(panel);
 		
-		// button
-		/*
-		JPanel panel1 = new JPanel();
-		add(panel1, BorderLayout.SOUTH);
-		JButton button = new JButton("Detail indormation");
-		add(panel1, BorderLayout.CENTER);
-		*/
-		todaysInspections = new ArrayList<Inspection>();
-		todaysListUpdate();
+		JPanel panel = new JPanel();
+		add(panel, BorderLayout.CENTER);
 		
 		TableModel dataModel = new AbstractTableModel() {
 			String[] columnNames = {"Officer name",
@@ -85,11 +74,12 @@ public class TodaysInspections extends JPanel {
 	                "Driver name",
 	                "Driver surname",
 	                "Driver ID",
-	                "Succesful"};
+	                "Date",
+	                "Pass"};
 			
 			@Override
 			public int getColumnCount() {
-				return 8;
+				return columnNames.length;
 			}
 			
 			@Override
@@ -99,21 +89,22 @@ public class TodaysInspections extends JPanel {
 			
 			@Override 
 			public int getRowCount() {
-				return todaysInspections.size();
+				return getCustoms().getInspectionsNum();
 			}
 
 			@Override
 			public Object getValueAt(int arg1, int arg0) {
 				try {
 					switch(arg0) {
-						case 0: return todaysInspections.get(arg1).getOfficer().getName();
-						case 1: return todaysInspections.get(arg1).getOfficer().getSurname();
-						case 2: return todaysInspections.get(arg1).getVehicle().getVehicleNumber();
-						case 3: return todaysInspections.get(arg1).getVehicle().getType();
-						case 4: return todaysInspections.get(arg1).getVehicle().getDriver().getName();
-						case 5: return todaysInspections.get(arg1).getVehicle().getDriver().getSurname();
-						case 6: return todaysInspections.get(arg1).getVehicle().getDriver().getPersonalID();
-						case 7: return todaysInspections.get(arg1).isSuccessful() ? "YES" : "NO";
+						case 0: return getCustoms().getInspection(arg1).getOfficer().getName();
+						case 1: return getCustoms().getInspection(arg1).getOfficer().getSurname();
+						case 2: return getCustoms().getInspection(arg1).getVehicle().getVehicleNumber();
+						case 3: return getCustoms().getInspection(arg1).getVehicle().getType();
+						case 4: return getCustoms().getInspection(arg1).getVehicle().getDriver().getName();
+						case 5: return getCustoms().getInspection(arg1).getVehicle().getDriver().getSurname();
+						case 6: return getCustoms().getInspection(arg1).getVehicle().getDriver().getPersonalID();
+						case 7: return  getCustoms().getInspection(arg1).getDateAsString();
+						case 8: return (getCustoms().getInspection(arg1).isSuccessful()) ? "YES" : "NO";
 						default : return null;
 					} 
 				} catch (Exception e) {}
@@ -132,6 +123,11 @@ public class TodaysInspections extends JPanel {
 
 		table.setPreferredScrollableViewportSize(new Dimension(450, 200));
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		// pareguliuoju dydzius
+		TableColumn col = table.getColumnModel().getColumn(7);
+		col.setPreferredWidth(80);
+		col = table.getColumnModel().getColumn(8);
+		col.setPreferredWidth(40);
 		panel.add(table);
 		
 		JScrollPane scrollPane = new JScrollPane(table);
@@ -139,29 +135,9 @@ public class TodaysInspections extends JPanel {
 		panel.add(scrollPane);
 
 	}
-	
+
 	public void update() {
-		this.todaysListUpdate();
 		((AbstractTableModel) table.getModel()).fireTableDataChanged();
-	}
-	
-	public void todaysListUpdate() {
-		Calendar c1 = Calendar.getInstance();
-		todaysInspections = new ArrayList<Inspection>();
-		for (int i = 0; i < customs.getInspectionsNum(); i++) {
-			try {
-				Inspection inspection = customs.getInspection(i);
-				if (inspection.getDate() != null) {
-					if (inspection.getDateAsString().equals(dateFormat.format(c1.getTime()) )) {
-						todaysInspections.add(inspection);
-					}
-				}
-				
-			} catch (CustomsIllegalArgumentException e) {
-				// never get here.
-				e.printStackTrace();
-			}	
-		}
 	}
 	
 	public String toString() {
@@ -175,4 +151,5 @@ public class TodaysInspections extends JPanel {
 	public void setCustoms(Customs cust) {
 		this.customs = cust;
 	}
+
 }

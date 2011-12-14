@@ -31,6 +31,9 @@ import java.util.Date;
 import java.util.Calendar;
 import javax.swing.JTextPane;
 import javax.swing.JTextArea;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
+
 import java.awt.Color;
 import java.awt.Font;
 
@@ -62,41 +65,6 @@ public class NewInspectionPanel2 extends JPanel {
 	public NewInspectionPanel2(NewInspectionPanel1 panel, Customs customs) {
 		this.panel = panel;
 		this.customs = customs;
-		String[] columnNames = {"Name",
-                "Surname",
-                "Personal ID",
-                "Employee no.",
-                "Experience"};
-		/*
-		Object[][] data = {
-			    {"Kathy", "Smith",
-			     "Snowboarding", new Integer(5), new Boolean(false)},
-			    {"John", "Doe",
-			     "Rowing", new Integer(3), new Boolean(true)},
-			    {"Sue", "Black",
-			     "Knitting", new Integer(2), new Boolean(false)},
-			    {"Jane", "White",
-			     "Speed reading", new Integer(20), new Boolean(true)},
-			    {"Joe", "Brown",
-			     "Pool", new Integer(10), new Boolean(false)}
-			};
-		*/
-		CustomsOfficer officer;
-		Object[][] data = new Object[customs.getOfficersNum()][5];
-		for (int i = 0; i < customs.getOfficersNum(); i++) {
-			
-			try {
-				officer = customs.getOfficer(i);
-				data[i][0] = officer.getName();
-				data[i][1] = officer.getSurname();
-				data[i][2] = officer.getPersonalID();
-				data[i][3] = officer.getEmployeeNumber();
-				data[i][4] = officer.getExperience();
-			} catch (CustomsIllegalArgumentException e) {
-				// never get here.
-				e.printStackTrace();
-			}
-		}
 		
 		lblCheck = new JLabel("");
 		lblCheck.setOpaque(true);
@@ -194,9 +162,47 @@ public class NewInspectionPanel2 extends JPanel {
 		JScrollPane scroll = new JScrollPane(textArea);
 		panelInspection.add(scroll, "2, 6, 15, 5, fill, fill");
 		
+		TableModel dataModel = new AbstractTableModel() {
+			String[] columnNames = {"Name",
+	                "Surname",
+	                "Personal ID",
+	                "Employee no.",
+	                "Experiance"
+	        };
+			
+			@Override
+			public int getColumnCount() {
+				return columnNames.length;
+			}
+			
+			@Override
+			public String getColumnName(int col) {
+	            return columnNames[col];
+	        }
+			
+			@Override 
+			public int getRowCount() {
+				return NewInspectionPanel2.this.customs.getOfficersNum();
+			}
+
+			@Override
+			public Object getValueAt(int arg1, int arg0) {
+				try {
+					switch(arg0) {
+						case 0: return NewInspectionPanel2.this.customs.getOfficer(arg1).getName();
+						case 1: return NewInspectionPanel2.this.customs.getOfficer(arg1).getSurname();
+						case 2: return NewInspectionPanel2.this.customs.getOfficer(arg1).getPersonalID();
+						case 3: return NewInspectionPanel2.this.customs.getOfficer(arg1).getEmployeeNumber();
+						case 4: return NewInspectionPanel2.this.customs.getOfficer(arg1).getExperience();
+						default : return null;
+					} 
+				} catch (Exception e) {}
+				return null;
+			}
+	         
+	      };
 		
-		
-		table = new JTable(data, columnNames) {  
+		table = new JTable(dataModel) {  
 			  public boolean isCellEditable(int row,int column){  
 				    return false;  
 				  }  
@@ -209,6 +215,10 @@ public class NewInspectionPanel2 extends JPanel {
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		panelOfficer.add(scrollPane);
 		
+	}
+	
+	public void update() {
+		((AbstractTableModel) table.getModel()).fireTableDataChanged();
 	}
 	
 	public void clearAll() {
@@ -230,13 +240,6 @@ public class NewInspectionPanel2 extends JPanel {
 				    "Error. No customs officer selected.",
 				    "New inspection error",
 				    JOptionPane.ERROR_MESSAGE);
-			return null;
-		}
-		else if (table.getSelectedRowCount() > 1) {
-			JOptionPane.showMessageDialog(this,
-				    "Please select only one officer",
-				    "Warning",
-				    JOptionPane.WARNING_MESSAGE);
 			return null;
 		}
 		else {
@@ -280,6 +283,10 @@ public class NewInspectionPanel2 extends JPanel {
 			}
 		}
 		
+	}
+	
+	public void setCustoms(Customs cust) {
+		this.customs = cust;
 	}
 	
 	public String toString() {

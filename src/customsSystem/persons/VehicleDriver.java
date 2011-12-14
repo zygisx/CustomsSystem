@@ -1,5 +1,7 @@
 package customsSystem.persons;
 
+import java.io.Serializable;
+
 import customsSystem.exceptions.*;
 import customsSystem.util.*;
 /**
@@ -7,7 +9,7 @@ import customsSystem.util.*;
  * @author Žygimantas Gatelis
  * @version 1.0 
  */
-public class VehicleDriver extends Passenger implements Cloneable{
+public class VehicleDriver extends Passenger implements Cloneable, Serializable{
 
 	/*
 	 * Galbut atrodo kad sis paveldejimas neatitinka IS-A reikalavimo.

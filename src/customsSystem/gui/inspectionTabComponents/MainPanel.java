@@ -16,6 +16,8 @@ import customsSystem.Customs;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.awt.GridLayout;
+import java.awt.FlowLayout;
 
 public class MainPanel extends JPanel {
 
@@ -29,7 +31,6 @@ public class MainPanel extends JPanel {
 	private Customs customs = null;
 	
 	public MainPanel(Customs cunstoms) {
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		buttons = new ArrayList<JRadioButton>();
 		this.customs = customs;
 		
@@ -45,29 +46,44 @@ public class MainPanel extends JPanel {
 		rdbtnShowTodaysInspections.setAlignmentX(Component.CENTER_ALIGNMENT);
 		rdbtnShowTodaysInspections.setActionCommand(customsSystem.gui.InspectionPanel.TODAYS_INSPECTIONS);
 		
+		JRadioButton rdbtnShowAll = new JRadioButton("show all inspections");
+		rdbtnShowAll.setAlignmentX(Component.CENTER_ALIGNMENT);
+		rdbtnShowAll.setActionCommand(customsSystem.gui.InspectionPanel.ALL_INSPECTIONS);
+		
 		buttons.add(rdbtnShowTodaysInspections);
 		buttons.add(rdbtnAddNewInspection);
+		buttons.add(rdbtnShowAll);
 		
 		group = new ButtonGroup();
 		group.add(rdbtnAddNewInspection);
 		group.add(rdbtnShowTodaysInspections);
+		group.add(rdbtnShowAll);
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		
 		
 		add(rdbtnAddNewInspection);
 		add(rdbtnShowTodaysInspections);
+		add(rdbtnShowAll);
+		
 	}
 	
 	public String getSelectedRadioButtonCommand() {
 		for (JRadioButton a : buttons) {
-			System.out.println(a.getActionCommand());
 			if (a.isSelected()) {
+				
 				return a.getActionCommand();
+				
 			}
 		}
 		return "";
 	}
 	
+	public void setCustoms(Customs cust) {
+		this.customs = cust;
+	}
+	
 	public String toString() {
 		return NAME;
 	}
+
 }

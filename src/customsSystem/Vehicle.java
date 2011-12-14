@@ -1,5 +1,6 @@
 package customsSystem;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import customsSystem.exceptions.*;
@@ -13,7 +14,7 @@ import customsSystem.util.ValidationResults;
  * @author Žygimantas Gatelis
  * @version 1.0 
  */
-public class Vehicle implements Validable, Cloneable {
+public class Vehicle implements Validable, Cloneable, Serializable {
 	
 
 	/* types of vehicle */

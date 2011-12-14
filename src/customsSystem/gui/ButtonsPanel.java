@@ -10,8 +10,8 @@ import java.awt.event.ActionEvent;
 
 public class ButtonsPanel extends JPanel {
 	
-	public final static String CANCEL = "cancel";
-	public final static String CONFIRM = "confirm";
+	public final static String BACK = "back";
+	public final static String NEXT = "next";
 	public final static String OK = "ok";
 
 	
@@ -26,14 +26,14 @@ public class ButtonsPanel extends JPanel {
 		setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		this.listener = main; 
 		//setBorder(BorderFactory.createTitledBorder("Mygtukai"));
-		btnCancel = new JButton("Cancel");
+		btnCancel = new JButton("Back");
 		btnCancel.addActionListener(listener);
-		btnCancel.setActionCommand(CANCEL);
+		btnCancel.setActionCommand(BACK);
 		add(btnCancel);
 		
-		btnConfirm = new JButton("Confirm");
+		btnConfirm = new JButton("Next");
 		btnConfirm.addActionListener(listener);
-		btnConfirm.setActionCommand(CONFIRM);
+		btnConfirm.setActionCommand(NEXT);
 		add(btnConfirm);
 		
 		btnOk = new JButton("OK");

@@ -4,6 +4,7 @@ package customsSystem;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 
 import customsSystem.exceptions.*;
@@ -16,7 +17,7 @@ import customsSystem.util.ValidationResults;
  * @author Žygimantas Gatelis
  * @version 1.0 
  */
-public final class Inspection implements Validable, Cloneable {
+public final class Inspection implements Validable, Cloneable, Serializable {
 	
 	
 	private CustomsOfficer officer = null;	 /* the inspector */
@@ -111,7 +112,7 @@ public final class Inspection implements Validable, Cloneable {
 	 */
 	public void setDate (int year, int month, int day) { 
 		this.date = GregorianCalendar.getInstance();
-		this.date.set(year, month, day);
+		this.date.set(year, month-1, day);
 	}
 	
 	/**
@@ -120,7 +121,10 @@ public final class Inspection implements Validable, Cloneable {
 	 * @see java.util.Date
 	 */
 	public Date getDate() {
-		return this.date.getTime();
+		if (date != null)
+			return this.date.getTime();
+		else
+			return null;
 	}
 	
 	/**

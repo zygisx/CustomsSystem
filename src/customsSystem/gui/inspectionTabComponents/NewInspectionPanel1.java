@@ -4,6 +4,7 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -117,14 +118,8 @@ public class NewInspectionPanel1 extends JPanel {
 			comboBox = new JComboBox();
 			
 			panelVehicle.add(comboBox, "4, 6, left, center");
-			comboBox.addItem(Vehicle.VehicleType.CAR);
-			comboBox.addItem(Vehicle.VehicleType.MOTORCYCLE);
-			
-			comboBox.addItem(Vehicle.VehicleType.VAN);
-			comboBox.addItem(Vehicle.VehicleType.TRUCK);
-			comboBox.addItem(Vehicle.VehicleType.BUS);
-			comboBox.addItem(Vehicle.VehicleType.MINIBUS);
-			comboBox.addItem(Vehicle.VehicleType.OTHER);
+			comboBox.setModel(new DefaultComboBoxModel(VehicleType.values()));
+			comboBox.setSelectedIndex(1);
 			//typeLabel.setLabelFor(comboBox);
 			
 

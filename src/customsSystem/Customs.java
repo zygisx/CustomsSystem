@@ -1,6 +1,10 @@
 package customsSystem;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.ListIterator;
+
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
 import customsSystem.exceptions.*;
 import customsSystem.persons.CustomsOfficer;
@@ -12,7 +16,7 @@ import customsSystem.persons.VehicleDriver;
  * @author Žygimantas Gatelis
  * @version 1.0 
  */
-public final class Customs implements Cloneable {
+public final class Customs implements Cloneable, Serializable {
 	
 	private ArrayList<CustomsOfficer> officers = new ArrayList<CustomsOfficer>();  /* All officers in customs */
 	private ArrayList<Inspection> inspections = new ArrayList<Inspection>();      /* All registered Inspections */
@@ -88,10 +92,19 @@ public final class Customs implements Cloneable {
 	 * @return <code>true</code> if officers list contained the specified element
 	 * @throws CustomsNullArgumentException if argument is <code>null</code>.
 	 */
-	public boolean removeOfficer (CustomsOfficer officer) 
+	public  boolean removeOfficer (CustomsOfficer officer) 
 			throws CustomsNullArgumentException {
 		if (officer == null)
 			throw new CustomsNullArgumentException("Null argument");
+		ArrayList<Inspection> list = new ArrayList<Inspection>(); //to avoid java.util.ConcurrentModificationException 
+		for (Inspection i : this.inspections) {
+			if (i.getOfficer().getPersonalID().equals(officer.getPersonalID()) ) {
+		    	  list.add(i);
+		     }
+		}
+		for (Inspection i : list) {
+			this.inspections.remove(i);
+		}
 		return this.officers.remove(officer);		
 	}
 	
@@ -107,6 +120,15 @@ public final class Customs implements Cloneable {
 			throws CustomsIllegalArgumentException {
 		if (index < 0 || index > this.getOfficersNum() )
 			throw new CustomsIllegalArgumentException("Wrong index.");
+		ArrayList<Inspection> list = new ArrayList<Inspection>(); //to avoid java.util.ConcurrentModificationException 
+		for (Inspection i : this.inspections) {
+			if (i.getOfficer().getPersonalID().equals(getOfficer(index).getPersonalID()) ) {
+		    	  list.add(i);
+		     }
+		}
+		for (Inspection i : list) {
+			this.inspections.remove(i);
+		}
 		this.officers.remove(index);	
 	}
 	

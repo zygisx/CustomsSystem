@@ -30,7 +30,7 @@ public class Import extends Thread {
 			main.setCustoms( (Customs) (inputStream.readObject()));
 			
 			JOptionPane.showMessageDialog(null,
-				    "Succesfully");
+				    "Import succesfull.");
 		} catch (FileNotFoundException e) {
 			JOptionPane.showMessageDialog(null,
 				    e.getMessage(),

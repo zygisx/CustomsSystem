@@ -29,7 +29,6 @@ public class RandomInspectionSettingFrame extends JFrame {
 
 	public static final int MIN = 0;
     public static final int MAX = 100;
-    //public static final int INIT = 1;  
 	
     private JLabel lblPossibility;
 	private JPanel contentPane;
@@ -41,6 +40,7 @@ public class RandomInspectionSettingFrame extends JFrame {
 	 */
 	public RandomInspectionSettingFrame(MainFrame frame, int init) {
 		this.frame = frame;
+		this.frame.setEnabled(false);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 350, 250);
 		contentPane = new JPanel();
@@ -81,7 +81,7 @@ public class RandomInspectionSettingFrame extends JFrame {
 		panel.add(slider);
 		
 		lblPossibility = new JLabel("Possibility: " + init);
-		lblPossibility.setHorizontalAlignment(SwingConstants.CENTER);
+		//lblPossibility.setHorizontalAlignment(SwingConstants.CENTER);
 		lblPossibility.setAlignmentX(Component.CENTER_ALIGNMENT);
 		panel.add(lblPossibility);
 		
@@ -97,6 +97,7 @@ public class RandomInspectionSettingFrame extends JFrame {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
+				RandomInspectionSettingFrame.this.frame.setEnabled(true);
 				dispose();
 			}
 		});
@@ -108,6 +109,7 @@ public class RandomInspectionSettingFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				RandomInspectionSettingFrame.this.frame.setPossibility(slider.getValue());
+				RandomInspectionSettingFrame.this.frame.setEnabled(true);
 				dispose();
 			}
 		});

@@ -20,7 +20,7 @@ public final class Customs implements Cloneable, Serializable {
 	
 	
 	private final String borderWith; 	/* With which country customs has border */
-	private final String customsName;	/* Customs name. */ 
+	private String customsName;	/* Customs name. */ 
 	
 	
 	/**
@@ -48,6 +48,12 @@ public final class Customs implements Cloneable, Serializable {
 		return this.customsName;
 	}
 	
+	public void setCustomsName(String name) throws CustomsNullArgumentException {
+		if (name == null)
+			throw new CustomsNullArgumentException("Null argument.");
+		this.customsName = name;
+		
+	}
 	/**
 	 * Returns the code of neighbor country.
 	 * @return the code of neighbor country

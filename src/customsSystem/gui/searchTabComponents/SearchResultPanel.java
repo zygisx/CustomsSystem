@@ -1,45 +1,44 @@
-package customsSystem.gui.inspectionTabComponents;
+package customsSystem.gui.searchTabComponents;
 
-import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-
-import javax.swing.JLabel;
-import java.awt.Font;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
-import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import customsSystem.Customs;
 import customsSystem.Inspection;
-import customsSystem.exceptions.CustomsIllegalArgumentException;
-import javax.swing.JButton;
-import java.awt.FlowLayout;
-import javax.swing.BoxLayout;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import customsSystem.gui.SearchPanel;
+import customsSystem.gui.inspectionTabComponents.DetailInspectionInfo;
 
-public class TodaysInspections extends JPanel {
+public class SearchResultPanel extends JPanel {
 
-	public static final String NAME = "today";
+	
 	private JTable table;
-	private Customs customs;
-	private ArrayList<Inspection> todaysInspections;
+	private ArrayList<Inspection> list;
+	private SearchPanel parent;
+	
 	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	
+	private Customs customs;
 	/**
 	 * Create the panel.
 	 */
-	public TodaysInspections(Customs customs) {
-		this.customs = customs;
+	public SearchResultPanel(SearchPanel parent, ArrayList<Inspection> list) {
+		this.list = list; 
+		this.parent = parent;
 		setLayout(new BorderLayout(0, 0));
 		
 		JPanel panel_1 = new JPanel();
@@ -57,19 +56,27 @@ public class TodaysInspections extends JPanel {
 						    JOptionPane.ERROR_MESSAGE);
 				}
 				else {
-					new DetailInspectionInfo(TodaysInspections.this.todaysInspections.get(rowSelected));
+					new DetailInspectionInfo(SearchResultPanel.this.list.get(rowSelected));
 				}
 				
 			}
 		});
+		JButton btnBack = new JButton("Back");
+		btnBack.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				SearchResultPanel.this.parent.backToFirst();
+			}
+		});
+		panel_1.add(btnBack);
 		panel_1.add(btnDetailInformation);
+		
 		
 		JPanel panel = new JPanel();
 		add(panel);
 		
 
-		todaysInspections = new ArrayList<Inspection>();
-		todaysListUpdate();
+		list = new ArrayList<Inspection>();
+		//listUpdate();
 		
 		TableModel dataModel = new AbstractTableModel() {
 			String[] columnNames = {"Officer name",
@@ -93,21 +100,24 @@ public class TodaysInspections extends JPanel {
 			
 			@Override 
 			public int getRowCount() {
-				return todaysInspections.size();
+				if (SearchResultPanel.this.list != null)
+					return SearchResultPanel.this.list.size();
+				else
+					return 0;
 			}
 
 			@Override
 			public Object getValueAt(int arg1, int arg0) {
 				try {
 					switch(arg0) {
-						case 0: return todaysInspections.get(arg1).getOfficer().getName();
-						case 1: return todaysInspections.get(arg1).getOfficer().getSurname();
-						case 2: return todaysInspections.get(arg1).getVehicle().getVehicleNumber();
-						case 3: return todaysInspections.get(arg1).getVehicle().getType();
-						case 4: return todaysInspections.get(arg1).getVehicle().getDriver().getName();
-						case 5: return todaysInspections.get(arg1).getVehicle().getDriver().getSurname();
-						case 6: return todaysInspections.get(arg1).getVehicle().getDriver().getPersonalID();
-						case 7: return todaysInspections.get(arg1).isSuccessful() ? "YES" : "NO";
+						case 0: return SearchResultPanel.this.list.get(arg1).getOfficer().getName();
+						case 1: return SearchResultPanel.this.list.get(arg1).getOfficer().getSurname();
+						case 2: return SearchResultPanel.this.list.get(arg1).getVehicle().getVehicleNumber();
+						case 3: return SearchResultPanel.this.list.get(arg1).getVehicle().getType();
+						case 4: return SearchResultPanel.this.list.get(arg1).getVehicle().getDriver().getName();
+						case 5: return SearchResultPanel.this.list.get(arg1).getVehicle().getDriver().getSurname();
+						case 6: return SearchResultPanel.this.list.get(arg1).getVehicle().getDriver().getPersonalID();
+						case 7: return SearchResultPanel.this.list.get(arg1).isSuccessful() ? "YES" : "NO";
 						default : return null;
 					} 
 				} catch (Exception e) {}
@@ -131,42 +141,14 @@ public class TodaysInspections extends JPanel {
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		panel.add(scrollPane);
-
+		
 	}
 	
-	public void update() {
-		this.todaysListUpdate();
+	public void setSearchResult(ArrayList<Inspection> list) {
+		this.list = list;
 		((AbstractTableModel) table.getModel()).fireTableDataChanged();
 	}
 	
-	public void todaysListUpdate() {
-		Calendar c1 = Calendar.getInstance();
-		todaysInspections = new ArrayList<Inspection>();
-		for (int i = 0; i < customs.getInspectionsNum(); i++) {
-			try {
-				Inspection inspection = customs.getInspection(i);
-				if (inspection.getDate() != null) {
-					if (inspection.getDateAsString().equals(dateFormat.format(c1.getTime()) )) {
-						todaysInspections.add(inspection);
-					}
-				}
-				
-			} catch (CustomsIllegalArgumentException e) {
-				// never get here.
-				e.printStackTrace();
-			}	
-		}
-	}
-	
-	public String toString() {
-		return NAME;
-	}
-	
-	public Customs getCustoms() {
-		return customs;
-	}
-	
-	public void setCustoms(Customs cust) {
-		this.customs = cust;
-	}
+
+
 }

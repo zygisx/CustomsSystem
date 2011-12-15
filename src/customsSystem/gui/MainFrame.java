@@ -3,16 +3,10 @@ package customsSystem.gui;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.EventQueue;
-import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Random;
 
 import javax.swing.JFrame;
@@ -24,21 +18,14 @@ import javax.swing.event.ChangeListener;
 import customsSystem.Customs;
 import customsSystem.Inspection;
 import customsSystem.Vehicle;
-import customsSystem.Vehicle.VehicleType;
-import customsSystem.exceptions.CustomsEmptyListException;
 import customsSystem.exceptions.CustomsException;
 import customsSystem.exceptions.CustomsIllegalArgumentException;
 import customsSystem.exceptions.CustomsNullArgumentException;
-import customsSystem.exceptions.CustomsUnknownOfficerException;
 import customsSystem.gui.inspectionTabComponents.AllInspections;
 import customsSystem.gui.inspectionTabComponents.MainPanel;
 import customsSystem.gui.inspectionTabComponents.NewInspectionPanel1;
 import customsSystem.gui.inspectionTabComponents.NewInspectionPanel2;
 import customsSystem.gui.inspectionTabComponents.TodaysInspections;
-import customsSystem.persons.CustomsOfficer;
-import customsSystem.persons.Passenger;
-import customsSystem.persons.VehicleDriver;
-import customsSystem.persons.CustomsOfficer.Experience;
 import customsSystem.util.Export;
 import customsSystem.util.Import;
 
@@ -48,17 +35,17 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JRadioButton;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.SwingConstants;
 
 public class MainFrame extends JFrame implements ActionListener {
 
 	public static final String DEFAULT_FILE_NAME = "customs.dat";
+	public static final String ICON_FILE = "/img/customs.gif";
 	
 	private JTabbedPane tabbedPane;
 	private JPanel contentPane;
 	private ButtonsPanel bPanel;
+	private SearchPanel searchPanel;
 	private InspectionPanel inspectionPanel;
 	private OfficersPanel officersPanel;
 	private Random rand;
@@ -69,91 +56,12 @@ public class MainFrame extends JFrame implements ActionListener {
 	
 	private int possibility = 30; // by default 30% possibility of yellow inspection 
 
-	
-	
-	public void niekas() {
-		try {
-			
-			// clone CustomsOfficer
-			CustomsOfficer p = new CustomsOfficer("Jonas", "Jonaitis", "12345");
-			
-		
-			
-			// clone Vehicle
-			Vehicle v = new Vehicle("ABC526" ,new VehicleDriver("Jonas", "Jonukas", "5846846"));
-			v.addPassenger(new Passenger("Indre", "Gatelyte", "35648618"));
-			
-			
-			// clone Inspection
-			Inspection i = new Inspection(p, v);
-			i.setDate(2011, 11, 20);
-			
-			
-			
-			// creation of few more objects 
-			CustomsOfficer c1 = new CustomsOfficer("Jonas", "Petraitis", "123456");
-			CustomsOfficer c2 = new CustomsOfficer("Justas", "Sinkeviï¿½ius", "123458");
-			CustomsOfficer c3 = new CustomsOfficer("Ilona", "Jusyte", "123459");
-			c1.setExperience(Experience.JUNIOR);
-			c2.setExperience(Experience.HEAD);
-			c3.setExperience(Experience.TRAINEE);
-			
-			Inspection i1 = new Inspection(c1, v);
-			Inspection i2 = new Inspection(c2, v);
-			Inspection i3 = new Inspection(c1, v);
-			Inspection i4 = new Inspection(c2, v);
-			Inspection i5 = new Inspection(c3, v);
-			Inspection i6 = new Inspection(c1, v);
-			
-			// Customs 
-			this.customs = new Customs("PL", "Lazdijï¿½ pasienio punktas.");
-			customs.addOfficer(p);
-			customs.addOfficer(c1);
-			customs.addOfficer(c2);
-			customs.addOfficer(c3);
-			
-			customs.addInspection(i);
-			customs.addInspection(i);
-			i.setDate(2011, 12, 10);
-			customs.addInspection(i1);
-			customs.addInspection(i2);
-			customs.addInspection(i3);
-			customs.addInspection(i4);
-			customs.addInspection(i5);
-			customs.addInspection(i6);
-			
-			//System.out.println(customs.getInspectionsNum());
-			
-		}
-		catch (CustomsUnknownOfficerException ex) {
-			System.out.println("Unknown officer: " + ex);
-		}
-		catch (CustomsNullArgumentException ex) {
-			System.out.println("Null argument: " + ex);
-		}
-		catch (CustomsIllegalArgumentException ex) {
-			System.out.println("Illegal argument: " + ex);
-		}
-		catch (CustomsEmptyListException ex) {
-			System.out.println(ex);
-		}
-		catch (CustomsException ex) {
-			System.out.println("Customs exception: " + ex);
-		}
-	}
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		
-		
-		
-		
-		
-		
-
-		
+	public static void main(String[] args) {	
 		EventQueue.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					MainFrame frame = new MainFrame();
@@ -169,9 +77,10 @@ public class MainFrame extends JFrame implements ActionListener {
 	 * Create the frame.
 	 */
 	public MainFrame() {
-		//niekas(); //TODO delete this shit
+		super("Customs system");
+		//System.setProperty("file.encoding", "UTF-8");
 		try {
-			this.customs = new Customs("PL", "Lazdijï¿½ pasienio punktas.");
+			this.customs = new Customs("PL", "Lazdijø pasienio punktas.");
 			
 		} catch (CustomsNullArgumentException e) {
 			JOptionPane.showMessageDialog(this,
@@ -213,6 +122,32 @@ public class MainFrame extends JFrame implements ActionListener {
 		});
 		mnSettings.add(mntmSetting);
 		
+		JMenuItem mntmCustomsName = new JMenuItem("Customs name");
+		mntmCustomsName.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String s = JOptionPane.showInputDialog(
+	                    MainFrame.this,
+	                    "Enter new customs name:",
+	                    "Customs name",
+	                    JOptionPane.PLAIN_MESSAGE);
+				if (s == null || s.equals("")) return;
+				try {
+					MainFrame.this.customs.setCustomsName(s);
+					MainFrame.this.inspectionPanel.getMainPanel().updateLabel();
+				} catch (CustomsNullArgumentException e1) {
+					JOptionPane.showMessageDialog(MainFrame.this,
+						    "Wrong value. " + e1.getMessage(),
+						    "Error",
+						    JOptionPane.ERROR_MESSAGE);
+				}
+	             
+				
+			}
+		});
+		mnSettings.add(mntmCustomsName);
+		
 		JMenuItem mntmImport = new JMenuItem("Import");
 		mntmImport.addActionListener(new ActionListener() {
 			@Override
@@ -251,6 +186,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		JMenuItem mntmExit = new JMenuItem("Exit");
 		mntmExit.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				dispose();
 		        System.exit(0);
@@ -262,10 +198,10 @@ public class MainFrame extends JFrame implements ActionListener {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 
-		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane = new JTabbedPane(SwingConstants.TOP);
 		contentPane.add(tabbedPane, BorderLayout.CENTER);
 		
-		bPanel = new ButtonsPanel((ActionListener) this);
+		bPanel = new ButtonsPanel(this);
 		contentPane.add(bPanel, BorderLayout.SOUTH);
 		bPanel.setOk(false);
 		bPanel.setConfirm(true);
@@ -277,15 +213,24 @@ public class MainFrame extends JFrame implements ActionListener {
 		
 		officersPanel = new OfficersPanel(this.customs);
 		tabbedPane.addTab("Officers", null, officersPanel, null);
+		
+		searchPanel = new SearchPanel(this.customs);
+		tabbedPane.addTab("Search", null, searchPanel, null);
+		
+		
 		tabbedPane.addChangeListener(new ChangeListener() {
 		    // This method is called whenever the selected tab changes
-		    public void stateChanged(ChangeEvent evt) {
+		    @Override
+			public void stateChanged(ChangeEvent evt) {
 		        JTabbedPane pane = (JTabbedPane)evt.getSource();
 		        int sel = pane.getSelectedIndex();
 		        if (sel == 0) {
 		        	bPanel.setVisible(true);
 		        }
 		        else if (sel == 1) {
+		        	bPanel.setVisible(false);
+		        }
+		        else if (sel == 2) {
 		        	bPanel.setVisible(false);
 		        }
 		    }
@@ -301,13 +246,10 @@ public class MainFrame extends JFrame implements ActionListener {
 		if (tabbedPane.getSelectedIndex() == 0) {
 			if (inspectionPanel.getCurrentPanel().toString() == MainPanel.NAME) {
 				// persoku i langa kurio reikia
-				if (e.getActionCommand().equals(ButtonsPanel.NEXT)) { /* +- veikia neturetu gliucint */
-					String result = ((MainPanel) ((InspectionPanel) inspectionPanel).getMainPanel()).getSelectedRadioButtonCommand();
+				if (e.getActionCommand().equals(ButtonsPanel.NEXT)) { 
+					String result = inspectionPanel.getMainPanel().getSelectedRadioButtonCommand();
 					((CardLayout)inspectionPanel.getLayout()).show(inspectionPanel, result);
 				}
-				
-				
-	
 			}
 			//NewInspectionPanel1
 			else if (inspectionPanel.getCurrentPanel().toString() == NewInspectionPanel1.NAME) {
@@ -338,7 +280,6 @@ public class MainFrame extends JFrame implements ActionListener {
 						
 					}				
 					if (vehicle != null) {
-						//System.out.println(v + "\n" + v.getDriver());
 						((CardLayout)inspectionPanel.getLayout()).show(inspectionPanel, InspectionPanel.ADD_INSPECTION_2);
 					}
 				}
@@ -354,7 +295,6 @@ public class MainFrame extends JFrame implements ActionListener {
 					try {
 						i = inspectionPanel.getNewInspectionPanel2().getInspection(vehicle);
 						if (i != null) customs.addInspection(i);
-						System.out.println(i);
 					} catch (CustomsIllegalArgumentException e1) {
 						JOptionPane.showMessageDialog(this,
 							    "Wrong parametres inspection:\n" + e1.getMessage(),
@@ -393,13 +333,6 @@ public class MainFrame extends JFrame implements ActionListener {
 					//inspectionPanel.getNewInspectionPanel().setCheck(1);
 				}
 			}
-		}
-		else if (tabbedPane.getSelectedIndex() == 1) {
-			
-			// code for officers tab
-			//officersPanel.update();
-			
-			
 		}
 		
 		if (tabbedPane.getSelectedIndex() == 1) {
@@ -450,6 +383,7 @@ public class MainFrame extends JFrame implements ActionListener {
 		this.customs = cust;
 		this.inspectionPanel.setCustoms(this.customs);
 		this.officersPanel.setCustoms(this.customs);
+		this.searchPanel.setCustoms(this.customs);
 		updateTables();
 	}
 	

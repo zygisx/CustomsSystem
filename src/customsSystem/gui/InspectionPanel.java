@@ -45,7 +45,7 @@ public class InspectionPanel extends JPanel {
 		add(all, ALL_INSPECTIONS);
 	}
 	
-	public JPanel getMainPanel() {
+	public MainPanel getMainPanel() {
 		return mainPanel;
 	}
 	
@@ -56,7 +56,6 @@ public class InspectionPanel extends JPanel {
 	    for (Component comp : this.getComponents() ) {
 	        if (comp.isVisible() == true) {
 	            card = (JPanel)comp;
-	            System.out.println(card.getName() );
 	        }
 	    }
 	    return card;
@@ -76,6 +75,7 @@ public class InspectionPanel extends JPanel {
 	public AllInspections getAllInspections() {
 		return all;
 	}
+
 	
 	public void setCustoms(Customs cust) {
 		this.customs = cust;

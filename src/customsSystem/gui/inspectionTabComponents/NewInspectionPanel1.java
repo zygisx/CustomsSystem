@@ -198,7 +198,6 @@ public class NewInspectionPanel1 extends JPanel {
 				textField_2.getText(),
 				textField_3.getText(),
 				textField_4.getText() );
-		System.out.println(textField_2.getText() + "**********");
 		
 		//driver license
 		String result = textField_5.getText();
@@ -250,7 +249,6 @@ public class NewInspectionPanel1 extends JPanel {
 	}
 	
 	public void setCheck(int a) {
-		//System.out.println(lblCheck);
 		lblCheck.setEnabled(true);
 		
 		switch(a) {

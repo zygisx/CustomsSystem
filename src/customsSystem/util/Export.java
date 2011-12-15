@@ -28,7 +28,7 @@ public class Export extends Thread {
 			outputStream = new ObjectOutputStream(new FileOutputStream(fileName));
 			outputStream.writeObject(this.customs);
 			JOptionPane.showMessageDialog(null,
-			    "Succesfully");
+			    "Export succesfull.");
 		} catch (FileNotFoundException e) {
 			JOptionPane.showMessageDialog(null,
 				    e.getMessage(),

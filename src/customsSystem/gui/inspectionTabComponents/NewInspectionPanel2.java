@@ -256,7 +256,6 @@ public class NewInspectionPanel2 extends JPanel {
 	
 	
 	public void setCheck(int a) {
-		//System.out.println(lblCheck);
 		lblCheck.setEnabled(true);
 		
 		switch(a) {

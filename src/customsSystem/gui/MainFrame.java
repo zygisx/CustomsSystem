@@ -18,6 +18,7 @@ import javax.swing.event.ChangeListener;
 import customsSystem.Customs;
 import customsSystem.Inspection;
 import customsSystem.Vehicle;
+import customsSystem.exceptions.CustomsEmptyListException;
 import customsSystem.exceptions.CustomsException;
 import customsSystem.exceptions.CustomsIllegalArgumentException;
 import customsSystem.exceptions.CustomsNullArgumentException;
@@ -26,6 +27,7 @@ import customsSystem.gui.inspectionTabComponents.MainPanel;
 import customsSystem.gui.inspectionTabComponents.NewInspectionPanel1;
 import customsSystem.gui.inspectionTabComponents.NewInspectionPanel2;
 import customsSystem.gui.inspectionTabComponents.TodaysInspections;
+import customsSystem.persons.VehicleDriver;
 import customsSystem.util.Export;
 import customsSystem.util.Import;
 
@@ -39,7 +41,7 @@ import javax.swing.SwingConstants;
 
 public class MainFrame extends JFrame implements ActionListener {
 
-	public static final String DEFAULT_FILE_NAME = "customs.dat";
+	public static final String DEFAULT_FILE_NAME = "./..";
 	public static final String ICON_FILE = "/img/customs.gif";
 	
 	private JTabbedPane tabbedPane;
@@ -52,7 +54,7 @@ public class MainFrame extends JFrame implements ActionListener {
 	private Vehicle vehicle;
 	
 	
-	private Customs customs = null;
+	private volatile Customs customs = null;
 	
 	private int possibility = 30; // by default 30% possibility of yellow inspection 
 
@@ -79,15 +81,17 @@ public class MainFrame extends JFrame implements ActionListener {
 	public MainFrame() {
 		super("Customs system");
 		//System.setProperty("file.encoding", "UTF-8");
+		
 		try {
 			this.customs = new Customs("PL", "Lazdijø pasienio punktas.");
+			//createStuff();
 			
 		} catch (CustomsNullArgumentException e) {
 			JOptionPane.showMessageDialog(this,
 				    "Unexpected error:\n" + e.getMessage(),
 				    "Error",
 				    JOptionPane.ERROR_MESSAGE);
-		} 
+		}
 		
 		/* uncomment to have windows look
 		try {
@@ -155,6 +159,7 @@ public class MainFrame extends JFrame implements ActionListener {
 				JFileChooser fc = new JFileChooser(new File(DEFAULT_FILE_NAME));
 				int returnVal = fc.showDialog(MainFrame.this, "Import");
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					setHeader("importing...");
 					new Import(fc.getSelectedFile(), MainFrame.this).start();
 				}
 			}
@@ -176,9 +181,17 @@ public class MainFrame extends JFrame implements ActionListener {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-					
-					new Export(file, MainFrame.this.customs).start();
-				}	
+					setHeader("exporting...");
+					try {
+						new Export(file, MainFrame.this).start();
+					} catch (java.util.ConcurrentModificationException ex) {
+						JOptionPane.showMessageDialog(MainFrame.this,
+							    "Error. Import Failed. Editing customs while imoprting. " + ex.getMessage(),
+							    "Error",
+							    JOptionPane.ERROR_MESSAGE);
+					}
+
+				}
 			}
 		});
 		mnFile.add(mExport);
@@ -208,19 +221,20 @@ public class MainFrame extends JFrame implements ActionListener {
 		bPanel.setCancel(false);
 		
 		
-		inspectionPanel = new InspectionPanel(this.customs);
+		inspectionPanel = new InspectionPanel(this.getCustoms());
 		tabbedPane.addTab("Inspections", null, inspectionPanel, null);
 		
-		officersPanel = new OfficersPanel(this.customs);
+		officersPanel = new OfficersPanel(this.getCustoms());
 		tabbedPane.addTab("Officers", null, officersPanel, null);
 		
-		searchPanel = new SearchPanel(this.customs);
+		searchPanel = new SearchPanel(this.getCustoms());
 		tabbedPane.addTab("Search", null, searchPanel, null);
 		
 		
 		tabbedPane.addChangeListener(new ChangeListener() {
 		    // This method is called whenever the selected tab changes
 		    @Override
+		    
 			public void stateChanged(ChangeEvent evt) {
 		        JTabbedPane pane = (JTabbedPane)evt.getSource();
 		        int sel = pane.getSelectedIndex();
@@ -239,6 +253,8 @@ public class MainFrame extends JFrame implements ActionListener {
 		rand = new Random();
 	}
 
+	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
@@ -256,7 +272,6 @@ public class MainFrame extends JFrame implements ActionListener {
 				if (e.getActionCommand().equals(ButtonsPanel.BACK)) {
 					
 					((CardLayout)inspectionPanel.getLayout()).first(inspectionPanel);
-					//inspectionPanel.getNewInspectionPanel().setCheck(1);
 				}
 				else if (e.getActionCommand().equals(ButtonsPanel.NEXT)) {
 					
@@ -294,7 +309,7 @@ public class MainFrame extends JFrame implements ActionListener {
 					Inspection i;
 					try {
 						i = inspectionPanel.getNewInspectionPanel2().getInspection(vehicle);
-						if (i != null) customs.addInspection(i);
+						if (i != null) this.getCustoms().addInspection(i);
 					} catch (CustomsIllegalArgumentException e1) {
 						JOptionPane.showMessageDialog(this,
 							    "Wrong parametres inspection:\n" + e1.getMessage(),
@@ -321,16 +336,13 @@ public class MainFrame extends JFrame implements ActionListener {
 			else if (inspectionPanel.getCurrentPanel().toString() == TodaysInspections.NAME) {
 				
 				if (e.getActionCommand().equals(ButtonsPanel.BACK)) {
-					//inspectionPanel.getTodaysInspections().update();
 					((CardLayout)inspectionPanel.getLayout()).first(inspectionPanel);
-					//inspectionPanel.getNewInspectionPanel().setCheck(1);
 				}
 			}
 			
 			else if (inspectionPanel.getCurrentPanel().toString() == AllInspections.NAME) {
 				if (e.getActionCommand().equals(ButtonsPanel.BACK)) {
 					((CardLayout)inspectionPanel.getLayout()).first(inspectionPanel);
-					//inspectionPanel.getNewInspectionPanel().setCheck(1);
 				}
 			}
 		}
@@ -378,16 +390,18 @@ public class MainFrame extends JFrame implements ActionListener {
 		}
 		
 	}
-	
+	public synchronized Customs getCustoms() {
+		return this.customs;
+	}
 	public void setCustoms(Customs cust) {
 		this.customs = cust;
-		this.inspectionPanel.setCustoms(this.customs);
-		this.officersPanel.setCustoms(this.customs);
-		this.searchPanel.setCustoms(this.customs);
+		this.inspectionPanel.setCustoms(this.getCustoms());
+		this.officersPanel.setCustoms(this.getCustoms());
+		this.searchPanel.setCustoms(this.getCustoms());
 		updateTables();
 	}
 	
-	public void updateTables() {
+	public synchronized void updateTables() {
 		inspectionPanel.getTodaysInspections().update();
 		inspectionPanel.getAllInspections().update();
 		inspectionPanel.getNewInspectionPanel2().update();
@@ -397,5 +411,25 @@ public class MainFrame extends JFrame implements ActionListener {
 	public void setPossibility(int possibility) {
 		this.possibility = possibility;
 	}
-	
+	public void setHeader(String s) {
+		super.setTitle("Customs system   " +s);
+	}
+	// only for testing.
+	private void createStuff() {
+		try {
+			for (int i = 0;i<1000;i++) {
+				Inspection inspection = new Inspection(this.getCustoms().getRandomOfficer(), 
+						new Vehicle("AAA" + rand.nextInt(1000), 
+								new VehicleDriver("Jurij" + (char)(rand.nextInt(26) + 'a'), 
+										"Jafim" + (char)(rand.nextInt(26) + 'a'), 
+										"1234" + rand.nextInt(100))));
+				this.getCustoms().addInspection(inspection);
+			}
+		} catch (CustomsException e) {
+			JOptionPane.showMessageDialog(this,
+				    "Error:\n" + e.getMessage(),
+				    "Error",
+				    JOptionPane.ERROR_MESSAGE);
+		}
+	}
 }

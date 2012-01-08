@@ -81,7 +81,6 @@ public class RandomInspectionSettingFrame extends JFrame {
 		panel.add(slider);
 		
 		lblPossibility = new JLabel("Possibility: " + init);
-		//lblPossibility.setHorizontalAlignment(SwingConstants.CENTER);
 		lblPossibility.setAlignmentX(Component.CENTER_ALIGNMENT);
 		panel.add(lblPossibility);
 		

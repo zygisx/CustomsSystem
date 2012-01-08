@@ -55,11 +55,6 @@ public class MainPanel extends JPanel {
 		    add(image, BorderLayout.NORTH);
 		}
 	    
-	    
-		/*
-	    JLabel image = new JLabel(icon);
-	    add(image, BorderLayout.NORTH);
-		*/
 		group = new ButtonGroup();
 		
 		JSeparator separator = new JSeparator();

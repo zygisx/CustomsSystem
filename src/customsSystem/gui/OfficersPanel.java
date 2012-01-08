@@ -142,7 +142,6 @@ public class OfficersPanel extends JPanel {
 
 		table.setPreferredScrollableViewportSize(new Dimension(450, 200));
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		// pareguliuoju dydzius
 		panel.add(table);
 		
 		JScrollPane scrollPane = new JScrollPane(table);

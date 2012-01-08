@@ -15,18 +15,20 @@ import customsSystem.gui.MainFrame;
 public class Export extends Thread {
 
 	private final File fileName;
-	private final Customs customs;
+	private final MainFrame parent;
 	
-	public Export(File fileName, Customs cust) {
+	public Export(File fileName, MainFrame parent) {
 		this.fileName = fileName;
-		this.customs = cust;
+		this.parent = parent;
 	}
 	
 	public void run() {
 		ObjectOutputStream outputStream = null;
 		try {
 			outputStream = new ObjectOutputStream(new FileOutputStream(fileName));
-			outputStream.writeObject(this.customs);
+			outputStream.writeObject(this.parent.getCustoms());
+			
+			parent.setHeader("");
 			JOptionPane.showMessageDialog(null,
 			    "Export succesfull.");
 		} catch (FileNotFoundException e) {
@@ -45,6 +47,7 @@ public class Export extends Thread {
                     outputStream.flush();
                     outputStream.close();
                 }
+                parent.setHeader("");
             } catch (IOException ex) {
                 ex.printStackTrace();
             }

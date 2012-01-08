@@ -29,6 +29,7 @@ public class Import extends Thread {
 			inputStream = new ObjectInputStream(new FileInputStream(fileName));
 			main.setCustoms( (Customs) (inputStream.readObject()));
 			
+			main.setHeader("");
 			JOptionPane.showMessageDialog(null,
 				    "Import succesfull.");
 		} catch (FileNotFoundException e) {

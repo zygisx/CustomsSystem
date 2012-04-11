@@ -1,12 +1,12 @@
 CustomsSystem.
 
-Muitinës sistema. 
-Direktorijos:
-src - kodo direktorija
-bin - vykdomi failai
-lib - bibliotekos
+Customs System - program for java course.
 
-Programa sukompiliuoti ir paleisti galite run.sh (linux) arba run.bat (win).
+src - source folder
+bin - binary files folders
+lib - libraries
 
-Pagrindinæ klasæ galima importuoti ið failø customs.dat arba customsLotOfInspections.dat,
-pastarasis saugo apie 10 000 patikrinimu.
+To compile and run program run run.sh (linux) or run.bat (win).
+
+Customs.dat and customsLotOfInspections.dat are data files for custom you can load it and work with prepared data.
+customsLotOfInspections.dat holds about 10 000 Inspections data.
